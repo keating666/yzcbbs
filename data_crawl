@@ -1,0 +1,220 @@
+import requests
+from datetime import datetime, timedelta
+import pytz
+
+# 飞书认证凭据
+app_id = ''
+app_secret = ''
+app_ticket = ''
+app_token = ''
+table_id = ''
+
+# 股票代码和名称
+stocks = {
+    "SZ": ["002702", "000895", "002186", "002216", "002251", "002507", "002726", "300094", "000019", "000428", "000721", "000876", "001215", "002069", "002330", "002481", "300999", "000529", "002661", "002567", "002820", "000900", "000564", "002299", "002982", "002124", "002746", "002515", "002187", "002696", "300501", "002321", "000524", "300498", "000651", "002714", "002311", "002086", "002100", "002701", "001313"],
+    "SH": ["605567", "603057", "603237", "600257", "600965", "603043", "603345", "603517", "603536", "605089", "605338", "600127", "601007", "605108", "600467", "601366", "605136", "603288", "603668"],
+    "BJ": ["836826"],
+    "HK": ["01458", "06862", "01579", "00520", "08283", "09922"],
+    "US": ["DDL", "DDC"]
+}
+
+code_dict = {
+    # A股
+    "002702": "海欣食品", "605567": "春雪食品", "603057": "紫燕食品", "603237": "五芳斋",
+    "000895": "双汇发展", "002186": "全聚德", "002216": "三全食品", "002251": "步步高",
+    "002507": "涪陵榨菜", "002726": "龙大美食", "300094": "国联水产", "600257": "大湖股份",
+    "600965": "福成股份", "603043": "广州酒家", "603345": "安井食品", "603517": "绝味食品",
+    "603536": "惠发食品", "605089": "味知香", "605338": "巴比食品", "000019": "深粮控股",
+    "000428": "华天酒店", "000721": "西安饮食", "000876": "新希望", "001215": "千味央厨",
+    "002069": "獐子岛", "002330": "得利斯", "002481": "双塔食品", "300999": "金龙鱼",
+    "600127": "金健米业", "601007": "金陵饭店", "605108": "同庆楼", "001313": "粤海饲料",
+    "600467": "好当家", "002086": "东方海洋", "002100": "天康生物", "002701": "奥瑞金",
+    "000529": "广弘控股", "002661": "克明食品", "002567": "唐人神", "002820": "桂发祥",
+    "000900": "现代投资", "000564": "供销大集", "002299": "圣农发展", "002982": "湘佳股份",
+    "002124": "天邦食品", "002746": "仙坛股份", "601366": "利群股份", "002515": "金字火腿",
+    "002187": "广百股份", "002696": "百洋股份", "300501": "海顺新材", "002321": "华英农业",
+    "605136": "丽人丽妆", "000524": "岭南控股", "300498": "温氏股份", "000651": "格力电器",
+    "603288": "海天味业", "002714": "牧原股份", "002311": "海大集团", "603668": "天马科技",
+    # 北交所
+    "836826": "盖世食品",
+    # 港股
+    "01458": "锅圈食汇", "06862": "海底捞", "01579": "颐海国际",
+    "00520": "呷哺呷哺", "08283": "中食民安", "09922": "九毛九",
+    # 美股
+    "DDL": "叮咚买菜", "DDC": "日日煮"
+}
+
+def get_last_trading_day():
+    cn_tz = pytz.timezone('Asia/Shanghai')
+    now = datetime.now(cn_tz)
+    
+    if now.weekday() >= 5:  # 如果是周末
+        days_to_subtract = now.weekday() - 4
+    elif now.hour < 15:  # 如果是交易日但还未收盘
+        days_to_subtract = 1
+    else:
+        days_to_subtract = 0
+    
+    last_trading_day = now - timedelta(days=days_to_subtract)
+    return last_trading_day.strftime('%Y%m%d')
+
+def query_stock_data(code, market):
+    url = f"http://qt.gtimg.cn/q={market}{code}"
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            data = response.text.split('~')
+            if len(data) > 45:
+                return {
+                    "fields": {
+                        "公司名称": code_dict[code],
+                        "交易所行情日期": data[30],
+                        "证券代码": f"{market}:{code}",
+                        "开盘价": data[5],
+                        "最高价": data[33],
+                        "最低价": data[34],
+                        "收盘价": data[3],
+                        "前收盘价": data[4],
+                        "成交量": data[6],
+                        "成交额": data[37],
+                    }
+                }
+            else:
+                print(f"数据格式错误 {market}:{code}: 数据字段不足")
+        else:
+            print(f"HTTP 错误 {market}:{code}: 状态码 {response.status_code}")
+    except Exception as e:
+        print(f"查询 {market}:{code} 数据时发生错误: {e}")
+    return None
+
+def fetch_data_for_all_markets():
+    all_data = []
+    for market, codes in stocks.items():
+        print(f"正在获取 {market} 市场的数据...")
+        for code in codes:
+            data = query_stock_data(code, market.lower())
+            if data:
+                all_data.append(data)
+            else:
+                print(f"警告：无法获取 {market}:{code} 的数据")
+    
+    print(f"A股股票总数：{len(stocks['SZ']) + len(stocks['SH'])}")
+    print(f"成功获取数据的A股股票数：{len([d for d in all_data if d['fields']['证券代码'].startswith('sz:') or d['fields']['证券代码'].startswith('sh:')])}")
+    
+    return all_data
+
+def get_app_access_token(app_id, app_secret, app_ticket):
+    url = 'https://open.feishu.cn/open-apis/auth/v3/app_access_token/internal'
+    payload = {"app_id": app_id, "app_secret": app_secret, "app_ticket": app_ticket}
+    response = requests.post(url, json=payload)
+    if response.status_code == 200:
+        return response.json().get('app_access_token')
+    return None
+
+def clear_table_records(app_id, app_secret, app_ticket):
+    access_token = get_app_access_token(app_id, app_secret, app_ticket)
+    if not access_token:
+        print("无法获取访问令牌。")
+        return False
+    
+    get_url = f'https://open.feishu.cn/open-apis/bitable/v1/apps/{app_token}/tables/{table_id}/records'
+    headers = {'Authorization': f'Bearer {access_token}', 'Content-Type': 'application/json'}
+    get_response = requests.get(get_url, headers=headers)
+    if get_response.status_code == 200:
+        response_json = get_response.json()
+        items = response_json.get('data', {}).get('items', [])
+        if items:
+            ids = [item['record_id'] for item in items]
+            del_url = f'https://open.feishu.cn/open-apis/bitable/v1/apps/{app_token}/tables/{table_id}/records/batch_delete'
+            del_response = requests.post(del_url, headers=headers, json={"records": ids})
+            if del_response.status_code in [200, 204]:
+                print("成功清除表格记录。")
+                return True
+    print("清除表格记录失败。")
+    return False
+
+def upload_data_to_feishu(app_token, table_id, data):
+    access_token = get_app_access_token(app_id, app_secret, app_ticket)
+    if not access_token:
+        print("无法获取访问令牌。")
+        return False
+
+    url = f'https://open.feishu.cn/open-apis/bitable/v1/apps/{app_token}/tables/{table_id}/records/batch_create'
+    headers = {
+        'Authorization': f'Bearer {access_token}',
+        'Content-Type': 'application/json'
+    }
+
+    # 确保所有字段都是字符串
+    for record in data:
+        for key, value in record['fields'].items():
+            record['fields'][key] = str(value)
+
+    payload = {"records": data}
+
+    try:
+        print("正在发送请求到飞书API...")
+        response = requests.post(url, headers=headers, json=payload)
+        
+        if response.status_code == 200:
+            response_json = response.json()
+            if 'data' in response_json and 'records' in response_json['data']:
+                print(f"成功上传 {len(response_json['data']['records'])} 条记录到飞书。")
+                return True
+            else:
+                print("响应中没有找到预期的数据结构。")
+                return False
+        else:
+            print(f"上传到飞书失败，状态码：{response.status_code}")
+            print("错误响应内容：", response.text)
+            return False
+    except requests.RequestException as e:
+        print(f"上传数据到飞书时发生错误: {e}")
+        return False
+
+def main():
+    print("开始执行股票数据抓取和上传程序...")
+
+    try:
+        all_data = fetch_data_for_all_markets()
+        if not all_data:
+            print("未获取到任何数据。")
+            return
+
+        print(f"共获取到 {len(all_data)} 条记录。")
+
+        # 打印每个市场获取到的记录数
+        market_counts = {}
+        for record in all_data:
+            market = record['fields']['证券代码'].split(':')[0]
+            market_counts[market] = market_counts.get(market, 0) + 1
+        
+        for market, count in market_counts.items():
+            print(f"{market} 市场获取到 {count} 条记录")
+
+        # 打印未能获取数据的股票
+        all_codes = set([f"{market.lower()}:{code}" for market, codes in stocks.items() for code in codes])
+        retrieved_codes = set([record['fields']['证券代码'] for record in all_data])
+        missing_codes = all_codes - retrieved_codes
+        if missing_codes:
+            print("以下股票未能获取数据：")
+            for code in missing_codes:
+                print(code)
+
+        # 清除旧数据
+        if not clear_table_records(app_id, app_secret, app_ticket):
+            print("清除旧数据失败。")
+            return
+        print("旧数据已清除。")
+
+        # 上传新数据
+        if not upload_data_to_feishu(app_token, table_id, all_data):
+            print("数据上传失败。")
+            return
+        print("数据上传成功。")
+
+    except Exception as e:
+        print(f"程序执行过程中发生错误: {e}")
+
+if __name__ == '__main__':
+    main()
