@@ -50,6 +50,9 @@ def get_last_trading_day():
     
     if now.weekday() >= 5:  # 如果是周末
         days_to_subtract = now.weekday() - 4
+    elif now.weekday() == 0 and now.hour < 15:
+        # 如果是周一且交易时间未结束，应回退到上周五
+        days_to_subtract = 3
     elif now.hour < 15:  # 如果是交易日但还未收盘
         days_to_subtract = 1
     else:
