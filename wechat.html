@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>联系小马哥 - 预制菜百宝书</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary: #35b350;
+            --primary-dark: #2a9f3e;
+            --secondary: #f8f9fa;
+            --text-dark: #212529;
+            --text-light: #6c757d;
+            --white: #ffffff;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--secondary);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        header {
+            background-color: var(--white);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            width: 100%;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .logo:hover {
+            transform: translateY(-2px);
+        }
+
+        .logo i {
+            font-size: 1.25rem;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 1.2rem 0.5rem 0.5rem 0.5rem;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .contact-section {
+            background-color: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.2rem 1rem 1.2rem 1rem;
+            width: 100%;
+            max-width: 420px;
+            margin: 1.2rem auto 0 auto;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .contact-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            position: relative;
+            display: inline-block;
+        }
+
+        .contact-title:after {
+            content: '';
+            position: absolute;
+            left: 25%;
+            bottom: -6px;
+            width: 50%;
+            height: 3px;
+            background-color: var(--primary);
+            border-radius: 2px;
+            animation: expandWidth 1s ease-out;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.7rem 0.7rem;
+            background-color: var(--secondary);
+            border-radius: var(--radius);
+            transition: var(--transition);
+            animation: fadeIn 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .contact-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        .contact-item i {
+            font-size: 1.5rem;
+            width: 38px;
+            height: 38px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--white);
+            border-radius: 50%;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .contact-item:hover i {
+            transform: scale(1.1);
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .contact-text {
+            text-align: left;
+            flex-grow: 1;
+        }
+
+        .contact-text h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+            color: var(--text-dark);
+        }
+
+        .contact-text p {
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+
+        .qr-code {
+            width: 160px;
+            height: 160px;
+            margin: 0.5rem auto 0.2rem auto;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            animation: fadeIn 0.5s ease-out 0.3s both;
+        }
+
+        .qr-code:hover {
+            transform: scale(1.05);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes expandWidth {
+            from {
+                width: 0;
+            }
+            to {
+                width: 50%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .contact-section {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+
+            .contact-title {
+                font-size: 1.75rem;
+            }
+
+            .contact-item {
+                padding: 1rem;
+            }
+
+            .contact-item i {
+                font-size: 1.5rem;
+                width: 40px;
+                height: 40px;
+            }
+
+            .qr-code {
+                width: 180px;
+                height: 180px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .contact-section {
+                padding: 1rem;
+            }
+
+            .contact-title {
+                font-size: 1.5rem;
+            }
+
+            .contact-item {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .contact-text {
+                text-align: center;
+            }
+
+            .qr-code {
+                width: 160px;
+                height: 160px;
+            }
+        }
+    </style>
+  </head>
+  <body>
+    <header>
+        <a href="index.html" class="logo">
+            <i class="fas fa-utensils"></i> 预制菜百宝书
+        </a>
+    </header>
+
+    <div class="main-content">
+        <div class="contact-section">
+            <h1 class="contact-title">联系小马哥</h1>
+            <div class="contact-info">
+                <div class="contact-item" style="animation-delay: 0.1s;">
+                    <i class="fab fa-weixin"></i>
+                    <div class="contact-text">
+                        <h3>微信</h3>
+                        <p>扫描下方二维码添加小马哥微信</p>
+                    </div>
+                </div>
+                <img src="/img/xiaomage.jpg" alt="小马哥微信二维码" class="qr-code">
+            </div>
+        </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>预制菜百宝书 · 预制菜全产业链知识库</title>
+<style>
+/* =========================================================
+   预制菜百宝书 · A 版样稿：高级美食杂志风门户
+   配色沿用定版基线（米杏纸底 + 墨绿主色 + 琥珀金点缀），
+   往暖调 editorial 方向调优。无外部字体 / JS 依赖，双端响应式，深浅两模式。
+   ========================================================= */
+:root{
+  --paper:#f6efe1;          /* 米杏纸底 */
+  --paper-2:#fbf7ee;        /* 卡片浅纸 */
+  --ink:#2b2a26;            /* 正文墨 */
+  --ink-soft:#6f6a5f;       /* 次要文字 */
+  --green:#157a5e;          /* 墨绿主色 */
+  --green-deep:#0f5c46;     /* 墨绿深 */
+  --gold:#a9711e;           /* 琥珀金点缀 */
+  --gold-soft:#c79a4e;
+  --line:#e3d9c4;           /* 分割线 */
+  --shadow:0 10px 30px rgba(43,42,38,.08);
+  --shadow-hover:0 16px 40px rgba(21,122,94,.16);
+  --radius:16px;
+  --ease:.28s cubic-bezier(.4,0,.2,1);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#1a1815; --paper-2:#232019; --ink:#efe7d6; --ink-soft:#b3a88f;
+    --green:#4fbf98; --green-deep:#3fa583; --gold:#d9ab63; --gold-soft:#e0bd85;
+    --line:#3a352b; --shadow:0 10px 30px rgba(0,0,0,.4); --shadow-hover:0 16px 40px rgba(79,191,152,.22);
+  }
+}
+:root[data-theme="light"]{
+  --paper:#f6efe1; --paper-2:#fbf7ee; --ink:#2b2a26; --ink-soft:#6f6a5f;
+  --green:#157a5e; --green-deep:#0f5c46; --gold:#a9711e; --gold-soft:#c79a4e;
+  --line:#e3d9c4; --shadow:0 10px 30px rgba(43,42,38,.08); --shadow-hover:0 16px 40px rgba(21,122,94,.16);
+}
+:root[data-theme="dark"]{
+  --paper:#1a1815; --paper-2:#232019; --ink:#efe7d6; --ink-soft:#b3a88f;
+  --green:#4fbf98; --green-deep:#3fa583; --gold:#d9ab63; --gold-soft:#e0bd85;
+  --line:#3a352b; --shadow:0 10px 30px rgba(0,0,0,.4); --shadow-hover:0 16px 40px rgba(79,191,152,.22);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  background:var(--paper); color:var(--ink); line-height:1.7;
+  min-height:100vh; overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+/* 顶部纸纹 + 细纹理，营造杂志质感 */
+body::before{
+  content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background:
+    radial-gradient(1200px 500px at 80% -10%, rgba(169,113,30,.10), transparent 60%),
+    radial-gradient(900px 500px at -10% 10%, rgba(21,122,94,.08), transparent 55%);
+}
+.serif{font-family:"Songti SC","STSong","SimSun",Georgia,"Times New Roman",serif;}
+
+/* ---------- 顶栏 ---------- */
+header{
+  position:sticky; top:0; z-index:100;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:.9rem clamp(1rem,4vw,2.5rem);
+  background:color-mix(in srgb, var(--paper) 86%, transparent);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+}
+.brand{display:flex; align-items:center; gap:.6rem; text-decoration:none; color:var(--ink);}
+.brand .mark{
+  width:38px;height:38px;border-radius:10px;
+  background:linear-gradient(135deg,var(--green),var(--green-deep));
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.2rem;
+  box-shadow:0 4px 12px rgba(21,122,94,.3);
+}
+.brand .name{font-weight:800;font-size:1.15rem;letter-spacing:.5px}
+.brand .name small{display:block;font-weight:500;font-size:.66rem;color:var(--ink-soft);letter-spacing:2px}
+nav{display:flex;align-items:center;gap:.4rem}
+nav a{
+  text-decoration:none;color:var(--ink-soft);font-weight:600;font-size:.9rem;
+  padding:.5rem .8rem;border-radius:8px;transition:var(--ease);white-space:nowrap;
+}
+nav a:hover{color:var(--green);background:color-mix(in srgb,var(--green) 10%,transparent)}
+.nav-cta{
+  background:var(--gold);color:#fff !important;
+  box-shadow:0 4px 12px rgba(169,113,30,.3);
+}
+.nav-cta:hover{background:var(--gold-soft) !important;color:#fff !important;transform:translateY(-1px)}
+#themeBtn{
+  background:none;border:1px solid var(--line);color:var(--ink-soft);
+  width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;transition:var(--ease);
+}
+#themeBtn:hover{border-color:var(--green);color:var(--green)}
+.nav-desktop{display:flex}
+.menu-toggle{display:none;background:none;border:1px solid var(--line);border-radius:8px;
+  width:38px;height:38px;font-size:1.2rem;color:var(--ink);cursor:pointer}
+
+/* ---------- Hero ---------- */
+.hero{
+  max-width:1100px;margin:0 auto;padding:clamp(2.5rem,7vw,5rem) clamp(1rem,4vw,2rem) 2rem;
+  text-align:center;
+}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:.5rem;
+  font-size:.8rem;font-weight:700;letter-spacing:3px;color:var(--gold);
+  text-transform:uppercase;margin-bottom:1.2rem;
+}
+.eyebrow::before,.eyebrow::after{content:"";width:28px;height:1px;background:var(--gold-soft)}
+.hero h1{
+  font-size:clamp(2.4rem,7vw,4.2rem);font-weight:800;line-height:1.1;letter-spacing:-1px;
+  margin-bottom:1.1rem;
+}
+.hero h1 .accent{
+  background:linear-gradient(120deg,var(--green),var(--gold));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero .lead{
+  font-size:clamp(1.02rem,2.4vw,1.3rem);color:var(--ink-soft);max-width:640px;margin:0 auto 1.6rem;
+}
+.hero-stats{
+  display:flex;justify-content:center;flex-wrap:wrap;gap:clamp(1.5rem,5vw,3.5rem);margin:2rem 0 2.2rem;
+}
+.stat{text-align:center}
+.stat .num{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;color:var(--green);line-height:1}
+.stat .num .plus{color:var(--gold);font-size:.7em}
+.stat .label{font-size:.82rem;color:var(--ink-soft);letter-spacing:1px;margin-top:.35rem}
+.hero-cta-row{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap}
+.btn{
+  display:inline-flex;align-items:center;gap:.6rem;
+  padding:.9rem 1.8rem;border-radius:50px;font-weight:700;font-size:1rem;
+  text-decoration:none;transition:var(--ease);cursor:pointer;border:none;
+}
+.btn-primary{background:linear-gradient(135deg,var(--green),var(--green-deep));color:#fff;
+  box-shadow:0 8px 24px rgba(21,122,94,.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(21,122,94,.42)}
+.btn-ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-2px)}
+
+/* ---------- 分组导航 ---------- */
+/* 导航区整体居中，与居中的 Hero 视觉呼应 */
+.section{max-width:1000px;margin:0 auto;padding:clamp(2rem,5vw,3.5rem) clamp(1rem,4vw,2rem)}
+.section-head{margin-bottom:2rem;text-align:center}
+.section-head .kicker{font-size:.78rem;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase}
+.section-head h2{font-size:clamp(1.5rem,4vw,2.1rem);font-weight:800;margin-top:.3rem;position:relative;display:inline-block}
+.section-head h2::after{content:"";display:block;width:56px;height:4px;border-radius:2px;
+  background:linear-gradient(90deg,var(--green),var(--gold));margin:.6rem auto 0}
+.section-head p{color:var(--ink-soft);margin:.6rem auto 0;max-width:640px}
+
+.group{margin-bottom:2.4rem}
+/* 分组小标题：色点+文字居中，两侧对称装饰线 */
+.group-title{
+  display:flex;align-items:center;justify-content:center;gap:.7rem;margin-bottom:1.2rem;
+  font-size:1.02rem;font-weight:800;color:var(--green);
+}
+.group-title .dot{width:10px;height:10px;border-radius:50%;background:var(--gold);flex:none}
+.group-title .rule{width:56px;height:1px;background:var(--line);flex:none}
+.group-title .rule.left{order:-1}
+
+/* 固定 4 列（每组恰好 4 个卡片，一行填满、整体居中，桌面不再右侧留白） */
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem}
+.card{
+  position:relative;background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius);
+  padding:1.4rem 1rem;text-decoration:none;color:var(--ink);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.7rem;text-align:center;
+  transition:var(--ease);overflow:hidden;min-height:120px;
+}
+.card::before{content:"";position:absolute;top:0;left:0;width:100%;height:3px;
+  background:linear-gradient(90deg,var(--green),var(--gold));transform:scaleX(0);transform-origin:left;transition:var(--ease)}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow-hover);border-color:transparent}
+.card:hover::before{transform:scaleX(1)}
+.card .ico{font-size:1.9rem;line-height:1}
+.card .txt{font-weight:700;font-size:.98rem}
+.card .en{font-size:.66rem;color:var(--ink-soft);letter-spacing:1.5px;text-transform:uppercase}
+
+/* ---------- 信任区 ---------- */
+.trust{background:var(--paper-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.trust-inner{max-width:1100px;margin:0 auto;padding:clamp(2.5rem,6vw,4rem) clamp(1rem,4vw,2rem);
+  display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(1.5rem,5vw,3rem);align-items:center}
+.trust blockquote{font-family:"Songti SC","STSong",Georgia,serif;font-size:clamp(1.2rem,3vw,1.7rem);
+  line-height:1.6;color:var(--ink);position:relative;padding-left:1.4rem;border-left:4px solid var(--gold)}
+.trust .sign{margin-top:1.2rem;font-size:.95rem;color:var(--ink-soft)}
+.trust .sign b{color:var(--green)}
+.trust-cards{display:flex;flex-direction:column;gap:1rem}
+.trust-item{display:flex;gap:1rem;align-items:flex-start;background:var(--paper);border:1px solid var(--line);
+  border-radius:12px;padding:1rem 1.2rem}
+.trust-item .ti-ico{font-size:1.5rem}
+.trust-item h4{font-size:1rem;margin-bottom:.2rem}
+.trust-item p{font-size:.86rem;color:var(--ink-soft);margin:0}
+.trust-item a{color:var(--green);font-weight:700;text-decoration:none}
+.trust-item a:hover{color:var(--gold)}
+
+/* ---------- 页脚 ---------- */
+footer{background:var(--paper-2);border-top:1px solid var(--line);padding:2.5rem 1rem 2rem;text-align:center}
+.footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:1.2rem;margin:1rem 0}
+.footer-links a{color:var(--ink-soft);text-decoration:none;font-size:.9rem;transition:var(--ease)}
+.footer-links a:hover{color:var(--green)}
+footer .copy{color:var(--ink-soft);font-size:.9rem}
+.beian{display:flex;align-items:center;justify-content:center;gap:.4rem;margin-top:1rem;flex-wrap:wrap;
+  font-size:.82rem;color:var(--ink-soft)}
+.beian a{color:var(--ink-soft);text-decoration:none;display:inline-flex;align-items:center;gap:.3rem}
+.beian a:hover{color:var(--green)}
+
+/* ---------- 响应式 ---------- */
+@media(max-width:768px){
+  .nav-desktop{display:none}
+  .menu-toggle{display:block}
+  nav.open{position:fixed;top:64px;left:0;right:0;flex-direction:column;gap:0;
+    background:var(--paper);border-bottom:1px solid var(--line);padding:.5rem 1rem 1rem;display:flex}
+  nav.open a{width:100%;padding:.8rem}
+  nav:not(.open){display:none}
+  .header-actions{display:flex;gap:.5rem}
+  .trust-inner{grid-template-columns:1fr}
+  /* 手机：固定 2 列，居中饱满 */
+  .grid{grid-template-columns:repeat(2,1fr);gap:.8rem}
+  .card{min-height:108px;padding:1.1rem .7rem}
+  .group-title .rule,.group-title .rule.left{width:28px}
+}
+@media(max-width:400px){
+  .hero-stats{gap:1.4rem}
+  .group-title{font-size:.94rem}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="#top">
+    <span class="mark serif">膳</span>
+    <span class="name">预制菜百宝书<small>YUZHICAI ENCYCLOPEDIA</small></span>
+  </a>
+  <div class="header-actions" style="display:flex;align-items:center;gap:.5rem">
+    <nav id="mainnav" class="nav-desktop">
+      <a href="#nav">全站导航</a>
+      <a href="https://xiaomage666.feishu.cn/wiki/AkM3wIHhQiaYnukTDUFcwRdinWb" target="_blank">价值观</a>
+      <a href="https://xiaomage666.feishu.cn/wiki/By8UwO82KiqKFDkOwKuc4jRUnx2" target="_blank">作者介绍</a>
+      <a class="nav-cta" href="https://www.zaih.com/falcon/mentors/2bh5i6s33je" target="_blank">咨询服务</a>
+    </nav>
+    <button id="themeBtn" title="切换深浅模式" aria-label="切换深浅模式">◐</button>
+    <button class="menu-toggle" id="menuToggle" aria-label="菜单">☰</button>
+  </div>
+</header>
+
+<main id="top">
+  <!-- Hero -->
+  <section class="hero">
+    <span class="eyebrow">预制菜行业首部知识库</span>
+    <h1>把预制菜的<span class="accent">全产业链</span><br>装进一页</h1>
+    <p class="lead">从展会、投资、标准到营销、渠道、出海——16 大板块、一站直达。系统、有用、还有趣。</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="num">16<span class="plus">+</span></div><div class="label">核心板块</div></div>
+      <div class="stat"><div class="num">全<span class="plus">链</span></div><div class="label">上中下游覆盖</div></div>
+      <div class="stat"><div class="num">免<span class="plus">费</span></div><div class="label">开放查阅</div></div>
+    </div>
+    <div class="hero-cta-row">
+      <a class="btn btn-primary" href="https://xiaomage666.feishu.cn/wiki/space/7343448461873971203?ccm_open_type=lark_wiki_spaceLink&open_tab_from=wiki_home" target="_blank">📖 百宝书使用指南</a>
+      <a class="btn btn-ghost" href="#nav">↓ 直接看导航</a>
+    </div>
+  </section>
+
+  <!-- 分组导航 -->
+  <section class="section" id="nav">
+    <div class="section-head">
+      <span class="kicker">Navigation</span>
+      <h2>预制菜百宝书 · 全站导航</h2>
+      <p>按产业链逻辑分组，从上游原料到下游渠道，找什么一目了然。</p>
+    </div>
+
+    <div class="group">
+      <div class="group-title"><span class="rule left"></span><span class="dot"></span>产业链上游 · 原料与生产<span class="rule"></span></div>
+      <div class="grid">
+        <a class="card" href="https://xiaomage666.feishu.cn/wiki/N26GwZjdXiZAWakorSecTR7nnIf" target="_blank"><span class="ico">🌱</span><span class="txt">原料</span><span class="en">Materials</span></a>
+        <a class="card" href="https://xiaomage666.feishu.cn/wiki/KOEEwZvJ0iLtnckXZSic2MUEnYd" target="_blank"><span class="ico">🏭</span><span class="txt">厂商</span><span class="en">Factory</span></a>
+        <a class="card" href="https://xiaomage666.feishu.cn/wiki/KgUvwzLZAiS5gHkfptAc6DFynog" target="_blank"><span class="ico">🔬</span><span class="txt">检测</span><span class="en">Testing</span></a>
+        <a class="card" href="https://xiaomage666.feishu.cn/wiki/F568w5PpfiJgaakkqw8cCACunGh" target="_blank"><span class="ico">🍲</span><span class="txt">药膳</span><span class="en">Herbal</span></a>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-title"><span class="rule left"></span><span class="dot"></span>产业链中游 · 标准与流通<span class="rule"></span></div>
+      <div class="grid">
+        <a class="card" href="https://xiaomage666.feishu.cn/share/base/dashboard/shrcnqROFLj3XI9IiEAR949UGed" target="_blank"><span class="ico">📋</span><span class="txt">标准</span><span class="en">Standard</span></a>
+        <a class="card" href="https://xiaomage666.feishu.cn/wiki/UjuEw1Nzmi2SRjkkluIcD1U4npb" target="_blank"><span class="ico">🚚</span><span class="txt">渠道</span><span class="en">Channel</span></a>
+        <a class="card" href="https://xiaomage666.feishu.cn/wiki/JwWowUHabilcyPk3UPxciRpQnOe" target="_blank"><span class="ico">🛒</span><span class="txt">电商</span><span class="en">E-Commerce</span></a>
+        <a class="card" href="https://xiaomage666.feishu.cn/wiki/QNdnwTj1XiN3b8kqcOecMGylntg" target="_blank"><span class="ico">👥</span><span class="txt">团购</span><span class="en">Group-Buy</span></a>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-title"><span class="rule left"></span><span class="dot"></span>产业链下游 · 营销与出海<span class="rule"></span></div>
+      <div class="grid">
+        <a class="card" href="https://xiaomage666.feishu.cn/wiki/TTDbwGUoSitcVIk719acZLUVnye" target="_blank"><span class="ico">📢</span><span class="txt">营销</span><span class="en">Marketing</span></a>
+        <a class="card" href="https://xiaomage666.feishu.cn/wiki/JxqTwMrzFivi4okha6ac3yzrnje" target="_blank"><span class="ico">🎵</span><span class="txt">抖音</span><span class="en">Douyin</span></a>
+        <a class="card" href="https://xiaomage666.feishu.cn/wiki/WR3NweieHiLdzskfGHEcvwTmnBe" target="_blank"><span class="ico">🌏</span><span class="txt">出海</span><span class="en">Overseas</span></a>
+        <a class="card" href="https://xiaomage666.feishu.cn/wiki/LeoJwh1gNi76nAkte6GcKzVgnAb" target="_blank"><span class="ico">🏪</span><span class="txt">市场</span><span class="en">Market</span></a>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-title"><span class="rule left"></span><span class="dot"></span>行业资讯 · 趋势与前沿<span class="rule"></span></div>
+      <div class="grid">
+        <a class="card" href="https://xiaomage666.feishu.cn/share/base/view/shrcn95UXAasFnbWE7kRjpKQ3r5" target="_blank"><span class="ico">📅</span><span class="txt">展会</span><span class="en">Expo</span></a>
+        <a class="card" href="https://xiaomage666.feishu.cn/share/base/dashboard/shrcniukZt8FFmnhVqjFkbXICsr" target="_blank"><span class="ico">📈</span><span class="txt">投资</span><span class="en">Investment</span></a>
+        <a class="card" href="https://xiaomage666.feishu.cn/wiki/Xb9uwOFQripQGskXgexcpBSFnqb" target="_blank"><span class="ico">🤖</span><span class="txt">AI技术</span><span class="en">AI Tech</span></a>
+        <a class="card" href="https://xiaomage666.feishu.cn/wiki/JdSKwraibiqf0fkm8flcTBjVnne" target="_blank"><span class="ico">🤝</span><span class="txt">协会</span><span class="en">Association</span></a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- 信任区 -->
+<section class="trust">
+  <div class="trust-inner">
+    <div>
+      <blockquote>很系统、蛮有用、最有趣——<br>做一本让同行愿意收藏的预制菜知识库。</blockquote>
+      <div class="sign">—— <b>小马哥</b> · 预制菜百宝书主理人</div>
+    </div>
+    <div class="trust-cards">
+      <div class="trust-item">
+        <span class="ti-ico">💬</span>
+        <div><h4>1对1 咨询服务</h4><p>行业落地、渠道对接、内容打法，<a href="https://www.zaih.com/falcon/mentors/2bh5i6s33je" target="_blank">在行约见 →</a></p></div>
+      </div>
+      <div class="trust-item">
+        <span class="ti-ico">❤️</span>
+        <div><h4>感谢墙</h4><p>感谢每一位贡献者与同行者，<a href="https://xiaomage666.feishu.cn/wiki/Qscvwq1hhil7oRksNkGcEKivnMe" target="_blank">查看名单 →</a></p></div>
+      </div>
+      <div class="trust-item">
+        <span class="ti-ico">📇</span>
+        <div><h4>联系小马哥</h4><p>合作 · 投稿 · 交流，<a href="wechat.html" target="_blank">加微信 →</a></p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="brand" style="justify-content:center;margin-bottom:.4rem">
+    <span class="mark serif">膳</span>
+    <span class="name">预制菜百宝书</span>
+  </div>
+  <div class="footer-links">
+    <a href="https://xiaomage666.feishu.cn/wiki/Qscvwq1hhil7oRksNkGcEKivnMe" target="_blank">感谢墙</a>
+    <a href="https://xiaomage666.feishu.cn/wiki/AkM3wIHhQiaYnukTDUFcwRdinWb" target="_blank">价值观</a>
+    <a href="https://xiaomage666.feishu.cn/wiki/By8UwO82KiqKFDkOwKuc4jRUnx2" target="_blank">作者介绍</a>
+    <a href="wechat.html" target="_blank">联系小马哥</a>
+  </div>
+  <p class="copy">&copy; 2025 广东小马哥电子商务有限公司</p>
+  <div class="beian">
+    <a href="https://beian.miit.gov.cn/#/Integrated/recordQuery" target="_blank">粤ICP备2024261836号</a>
+    <span>·</span>
+    <a href="https://beian.mps.gov.cn/#/query/webSearch?code=44011302004477" target="_blank">
+      <img src="/img/beian-logo.png" alt="公安备案图标" width="16" height="16">粤公网安备44011302004477
+    </a>
+  </div>
+</footer>
+
+<script>
+/* 深浅模式：跟随系统 + 手动切换记忆（localStorage） */
+(function(){
+  var root=document.documentElement;
+  var saved=null; try{saved=localStorage.getItem('yzc-theme')}catch(e){}
+  if(saved) root.setAttribute('data-theme',saved);
+  document.getElementById('themeBtn').addEventListener('click',function(){
+    var cur=root.getAttribute('data-theme');
+    var next = cur==='dark' ? 'light' : (cur==='light' ? 'dark' :
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'light' : 'dark'));
+    root.setAttribute('data-theme',next);
+    try{localStorage.setItem('yzc-theme',next)}catch(e){}
+  });
+})();
+/* 移动端菜单 */
+document.getElementById('menuToggle').addEventListener('click',function(){
+  document.getElementById('mainnav').classList.toggle('open');
+});
+</script>
+</body>
+</html>

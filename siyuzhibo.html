@@ -1,0 +1,3053 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>门店与跟单工作配合操作手册</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-size: 16px; /* 增大基础字体 */
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 2.2em;
+            margin-bottom: 5px;
+            font-weight: 600;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            color: white;
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+        
+        .header p:nth-child(2) {
+            font-size: 2em;
+            font-weight: 700;
+            margin: 8px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .version-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+        
+        /* 快速入口卡片 */
+        
+        /* 导航标签 */
+        .nav-wrapper {
+            margin-bottom: 30px;
+        }
+        
+        .nav-tabs {
+            background: white;
+            border-radius: 15px;
+            padding: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .nav-tabs-bottom {
+            margin-top: 15px;
+        }
+        
+        .nav-tab {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px 20px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .nav-tab:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .nav-tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        /* 内容区域 */
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .card h2 {
+            color: #764ba2;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .card h3 {
+            color: #667eea;
+            margin: 20px 0 15px;
+        }
+        
+        .card h4 {
+            color: #764ba2;
+            margin: 15px 0 10px;
+        }
+        
+        /* 时间轴 */
+        .timeline-horizontal {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 40px 20px;
+            overflow-x: auto;
+            background: #f8f9fa;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .timeline-node {
+            position: relative;
+            text-align: center;
+            min-width: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .timeline-node .node-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+            background: white;
+            border: 4px solid #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.2);
+        }
+        
+        .timeline-node.active .node-icon {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .timeline-node .node-title {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #333;
+            font-size: 1em;
+        }
+        
+        .timeline-node .node-time {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        
+        .timeline-connector {
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            position: relative;
+            top: -40px;
+            margin: 0 -20px;
+        }
+        
+        /* 决策树 */
+        .decision-tree {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+        
+        .decision-node {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .decision-node.question {
+            border-left-color: #ffd93d;
+            background: #fffef5;
+        }
+        
+        .decision-node.answer {
+            margin-left: 40px;
+            border-left-color: #4caf50;
+            background: #f1f8f4;
+        }
+        
+        /* 流程卡片 */
+        .process-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .process-card {
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            border-radius: 15px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .process-card::before {
+            content: attr(data-step);
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        
+        .process-card h4 {
+            margin-bottom: 15px;
+        }
+        
+        .process-card ul {
+            margin-left: 20px;
+        }
+        
+        .process-card li {
+            margin-bottom: 8px;
+            color: #555;
+        }
+        
+        /* 提示框样式 */
+        .alert-box {
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .alert-warning {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            color: #856404;
+        }
+        
+        .alert-danger {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            border: 2px solid #17a2b8;
+            color: #0c5460;
+        }
+        
+        .alert-box h4 {
+            margin-bottom: 10px;
+        }
+        
+        /* 标签样式 */
+        .tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .tag-must {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .tag-important {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .tag-new {
+            background: #28a745;
+            color: white;
+        }
+        
+        .tag-tip {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        /* 表格样式 */
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .info-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .info-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .info-table tr:hover {
+            background: #f5f5f5;
+        }
+        
+        /* 折叠面板 */
+        .accordion {
+            margin: 20px 0;
+        }
+        
+        /* 换货申请条件样式 */
+        .condition-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .condition-column {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .condition-header {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .can-exchange .condition-header {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+        }
+        
+        .cannot-exchange .condition-header {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c2c7 100%);
+            color: #721c24;
+        }
+        
+        .condition-icon {
+            font-size: 1.2em;
+        }
+        
+        .condition-list {
+            padding: 0;
+        }
+        
+        .condition-item {
+            padding: 12px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #444;
+            font-size: 14px;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .condition-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .condition-item:last-child {
+            border-bottom: none;
+        }
+        
+        .item-index {
+            width: 24px;
+            height: 24px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .cannot-exchange .item-index {
+            background: #dc3545;
+        }
+        
+        .item-emoji {
+            font-size: 1.2em;
+            flex-shrink: 0;
+        }
+        
+        .item-text {
+            flex: 1;
+            color: #333;
+        }
+        
+        /* 换货要求网格 */
+        .requirements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .requirement-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 18px;
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .requirement-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .requirement-icon {
+            font-size: 1.8em;
+            flex-shrink: 0;
+        }
+        
+        .requirement-content {
+            flex: 1;
+        }
+        
+        .requirement-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        
+        .requirement-text {
+            color: #666;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .condition-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .requirements-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* 群组管理样式 */
+        .group-flow-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 16px;
+            margin: 20px 0;
+        }
+        
+        .group-flow-item {
+            text-align: center;
+            flex: 1;
+            max-width: 300px;
+        }
+        
+        .flow-number {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: bold;
+            margin: 0 auto 15px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .flow-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .flow-desc {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .flow-arrow {
+            font-size: 36px;
+            color: #667eea;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .group-details-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .detail-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .detail-header {
+            background: #f8f9fa;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid #e9ecef;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        .detail-icon {
+            font-size: 1.3em;
+        }
+        
+        .detail-content {
+            padding: 20px;
+        }
+        
+        .detail-content ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        
+        .detail-content li {
+            margin-bottom: 12px;
+            color: #555;
+        }
+        
+        .detail-content li:last-child {
+            margin-bottom: 8px;
+        }
+        
+        .auth-timing {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-top: 8px;
+        }
+        
+        .timing-item {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+        
+        .timing-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        /* 群组管理原有样式 - 删除重复部分 */
+        .group-management {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .group-type {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .group-header {
+            background: linear-gradient(90deg, #f8f9fa 0%, #fff 100%);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .group-icon {
+            font-size: 1.5em;
+        }
+        
+        .group-name {
+            font-weight: 600;
+            font-size: 1.1em;
+            color: #333;
+        }
+        
+        .group-content {
+            padding: 20px;
+        }
+        
+        .group-content > div {
+            margin-bottom: 15px;
+        }
+        
+        .group-content > div:last-child {
+            margin-bottom: 0;
+        }
+        
+        .group-content strong {
+            color: #444;
+            margin-right: 8px;
+        }
+        
+        .group-content .highlight {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #856404;
+        }
+        
+        .group-content ul {
+            margin: 8px 0 0 20px;
+            color: #666;
+        }
+        
+        .group-content li {
+            margin-bottom: 6px;
+        }
+        
+        /* 协作事项网格 */
+        .cooperation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .cooperation-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+        
+        .coop-number {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .coop-content strong {
+            display: block;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .coop-content p {
+            color: #666;
+            font-size: 14px;
+            margin: 0;
+        }
+        
+        /* 移动端适配 */
+        @media (max-width: 600px) {
+            .cooperation-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .group-header {
+                padding: 12px 15px;
+            }
+            
+            .group-content {
+                padding: 15px;
+            }
+            
+            /* 群组流程图移动端适配 */
+            .group-flow-container {
+                flex-direction: column;
+                gap: 20px;
+                padding: 30px 15px;
+            }
+            
+            .flow-arrow {
+                transform: rotate(90deg);
+                margin: -10px 0;
+            }
+            
+            .flow-number {
+                width: 60px;
+                height: 60px;
+                font-size: 28px;
+            }
+            
+            .flow-title {
+                font-size: 16px;
+            }
+            
+            .flow-desc {
+                font-size: 13px;
+                padding: 0 10px;
+            }
+            
+            .group-details-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .detail-header {
+                padding: 10px 15px;
+            }
+            
+            .detail-content {
+                padding: 15px;
+            }
+        }
+        
+        /* 费用管理样式 */
+        .expense-types-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .expense-type-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        
+        .expense-type-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .expense-type-header {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .expense-icon {
+            font-size: 1.5em;
+        }
+        
+        .expense-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.05em;
+        }
+        
+        .expense-items {
+            padding: 0;
+        }
+        
+        .expense-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1.5fr 1.5fr;
+            gap: 10px;
+            align-items: start;
+        }
+        
+        .expense-item:last-child {
+            border-bottom: none;
+        }
+        
+        .expense-item span {
+            font-size: 14px;
+        }
+        
+        .item-name {
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .item-rule {
+            color: #fff;
+            background: #667eea;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            white-space: nowrap;
+        }
+        
+        .item-note {
+            color: #666;
+        }
+        
+        .item-limit {
+            color: #999;
+            font-size: 13px;
+        }
+        
+        /* 移动端费用管理适配 */
+        @media (max-width: 768px) {
+            .expense-types-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .expense-item {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .item-rule {
+                display: inline-block;
+                width: fit-content;
+            }
+        }
+        
+        /* 报销材料清单样式 */
+        .reimbursement-docs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .doc-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .doc-header {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        .doc-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .doc-item {
+            color: #666;
+            font-size: 14px;
+            padding-left: 5px;
+        }
+        
+        /* 报销流程时间线样式 */
+        .reimbursement-timeline {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        
+        .timeline-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: white;
+            color: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .step-content {
+            text-align: center;
+            color: white;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .step-desc {
+            font-size: 13px;
+            opacity: 0.95;
+            line-height: 1.4;
+            max-width: 150px;
+        }
+        
+        .timeline-arrow {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            margin: 0 10px;
+            margin-bottom: 50px;
+            flex-shrink: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .reimbursement-timeline {
+                flex-direction: column;
+                padding: 20px;
+            }
+            
+            .timeline-step {
+                margin-bottom: 20px;
+                min-width: auto;
+            }
+            
+            .timeline-arrow {
+                transform: rotate(90deg);
+                margin: 10px 0;
+            }
+            
+            .step-desc {
+                max-width: 200px;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .reimbursement-docs {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .accordion-item {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+        
+        .accordion-header {
+            padding: 20px;
+            background: #f8f9fa;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+        
+        .accordion-header:hover {
+            background: #e8e5ff;
+        }
+        
+        .accordion-header h4 {
+            margin: 0;
+            color: #764ba2;
+        }
+        
+        .accordion-arrow {
+            transition: transform 0.3s;
+        }
+        
+        .accordion-item.active .accordion-arrow {
+            transform: rotate(180deg);
+        }
+        
+        .accordion-content {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s, padding 0.3s;
+        }
+        
+        .accordion-item.active .accordion-content {
+            padding: 20px;
+            max-height: 1000px;
+        }
+        
+        /* 检查清单 */
+        .checklist {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        /* 退货包装标准新样式 */
+        .packing-standard-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .standard-group {
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .standard-group:last-child {
+            border-bottom: none;
+        }
+        
+        .group-title {
+            background: linear-gradient(90deg, #f8f9fa 0%, #fff 100%);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .title-icon {
+            font-size: 1.3em;
+        }
+        
+        .title-text {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.05em;
+        }
+        
+        .standard-list {
+            padding: 0;
+        }
+        
+        .standard-row {
+            display: flex;
+            align-items: flex-start;
+            padding: 18px 24px;
+            border-bottom: 1px solid #f5f5f5;
+            transition: background 0.2s;
+        }
+        
+        .standard-row:hover {
+            background: #fafbfc;
+        }
+        
+        .standard-row:last-child {
+            border-bottom: none;
+        }
+        
+        .row-number {
+            width: 28px;
+            height: 28px;
+            background: #667eea;
+            color: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            flex-shrink: 0;
+            margin-right: 16px;
+            margin-top: 2px;
+        }
+        
+        .row-content {
+            flex: 1;
+        }
+        
+        .row-title {
+            color: #222;
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 4px;
+        }
+        
+        .row-detail {
+            color: #888;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+        
+        .row-example {
+            margin-top: 10px;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .example-correct {
+            color: #16a34a;
+            font-size: 14px;
+        }
+        
+        .example-wrong {
+            color: #dc2626;
+            font-size: 14px;
+        }
+        
+        .special-handling {
+            margin-top: 12px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 10px;
+        }
+        
+        .handling-item {
+            background: #f8f9fa;
+            padding: 10px 14px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .item-emoji {
+            font-size: 1.1em;
+            flex-shrink: 0;
+        }
+        
+        .item-name {
+            font-weight: 600;
+            color: #444;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        
+        .item-action {
+            color: #666;
+            font-size: 13px;
+            flex: 1;
+        }
+        
+        /* 移动端适配 */
+        @media (max-width: 600px) {
+            .packing-standard-container {
+                border-radius: 12px;
+            }
+            
+            .group-title {
+                padding: 14px 16px;
+            }
+            
+            .standard-row {
+                padding: 14px 16px;
+            }
+            
+            .row-number {
+                width: 24px;
+                height: 24px;
+                font-size: 12px;
+                margin-right: 12px;
+            }
+            
+            .row-title {
+                font-size: 14px;
+            }
+            
+            .special-handling {
+                grid-template-columns: 1fr;
+            }
+            
+            .handling-item {
+                padding: 8px 12px;
+            }
+        }
+        
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .checklist-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .checklist-icon {
+            width: 30px;
+            height: 30px;
+            background: #4caf50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .nav-tabs {
+                gap: 5px;
+                padding: 8px;
+            }
+            
+            .nav-tab {
+                font-size: 14px;
+                padding: 10px 15px;
+                min-width: 100px;
+            }
+            
+            .quick-buttons {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+            
+            .timeline-horizontal {
+                flex-direction: column;
+                padding: 20px;
+                gap: 20px;
+            }
+            
+            .timeline-connector {
+                display: none;
+            }
+            
+            .timeline-node {
+                margin: 15px 0;
+                width: 100%;
+            }
+            
+            .timeline-node .node-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5em;
+            }
+            
+            .process-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .process-card::before {
+                top: 10px;
+                right: 10px;
+                width: 40px;
+                height: 40px;
+                font-size: 1.2em;
+            }
+            
+            .info-table {
+                font-size: 14px;
+            }
+            
+            .info-table th, .info-table td {
+                padding: 8px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .timeline-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .time-card {
+                margin-bottom: 10px;
+            }
+        }
+        
+        /* 时间线网格样式 */
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .time-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .time-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+        
+        .time-icon {
+            font-size: 2em;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+            border-radius: 10px;
+            flex-shrink: 0;
+        }
+        
+        .time-content {
+            flex: 1;
+        }
+        
+        .time-label {
+            font-weight: bold;
+            color: #764ba2;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+        
+        .time-desc {
+            color: #666;
+            font-size: 0.9em;
+            line-height: 1.3;
+        }
+        
+        .time-desc small {
+            color: #999;
+            font-size: 0.85em;
+        }
+        
+        /* 移动端优化 */
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 25px 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            .header p {
+                font-size: 1em;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .nav-tab {
+                width: 100%;
+                text-align: center;
+            }
+            
+            /* 移动端导航优化 */
+            @media (max-width: 600px) {
+                body {
+                    font-size: 16px !important; /* 确保移动端基础字体16px */
+                }
+                
+                /* 标题字体优化 */
+                h1 {
+                    font-size: 1.8em !important;
+                }
+                
+                h2 {
+                    font-size: 1.5em !important;
+                }
+                
+                h3 {
+                    font-size: 1.3em !important;
+                }
+                
+                h4 {
+                    font-size: 1.1em !important;
+                }
+                
+                /* 段落和列表 */
+                p, li {
+                    font-size: 16px !important;
+                    line-height: 1.7 !important;
+                }
+                
+                /* 表格字体 */
+                .info-table th,
+                .info-table td {
+                    font-size: 15px !important;
+                    padding: 10px 8px;
+                }
+                
+                /* 导航标签 */
+                .nav-tab {
+                    font-size: 15px !important;
+                }
+                
+                /* 提示框 */
+                .alert-box {
+                    font-size: 15px !important;
+                }
+                
+                .alert-box h4 {
+                    font-size: 17px !important;
+                }
+                
+                .alert-box li {
+                    font-size: 15px !important;
+                }
+                
+                /* 流程卡片 */
+                .process-card h4 {
+                    font-size: 16px !important;
+                }
+                
+                .process-card li {
+                    font-size: 15px !important;
+                }
+                
+                /* 检查清单 */
+                .checklist-item span {
+                    font-size: 15px !important;
+                }
+                
+                /* 时间轴 */
+                .timeline-content h4 {
+                    font-size: 16px !important;
+                }
+                
+                .timeline-content p {
+                    font-size: 15px !important;
+                }
+                
+                /* 条件项 */
+                .condition-item {
+                    font-size: 15px !important;
+                }
+                
+                /* 费用项 */
+                .expense-item span {
+                    font-size: 14px !important;
+                }
+                
+                /* 标准行 */
+                .row-title {
+                    font-size: 15px !important;
+                }
+                
+                .row-detail {
+                    font-size: 14px !important;
+                }
+                
+                /* 特殊处理项 */
+                .handling-item {
+                    font-size: 14px !important;
+                }
+                
+                /* 按钮和标签 */
+                .badge {
+                    font-size: 13px !important;
+                }
+                
+                /* 联系信息 */
+                .contact-info p {
+                    font-size: 15px !important;
+                }
+                
+                /* 流程描述 */
+                .flow-desc {
+                    font-size: 14px !important;
+                }
+                
+                .flow-title {
+                    font-size: 17px !important;
+                }
+                
+                /* 群组内容 */
+                .group-content {
+                    font-size: 15px !important;
+                }
+                
+                /* 协作项 */
+                .coop-content p {
+                    font-size: 15px !important;
+                }
+                
+                /* 要求卡片 */
+                .requirement-text {
+                    font-size: 14px !important;
+                }
+                
+                .requirement-title {
+                    font-size: 16px !important;
+                }
+                
+                /* 报销文档 */
+                .doc-item {
+                    font-size: 15px !important;
+                }
+                
+                .doc-header {
+                    font-size: 16px !important;
+                }
+                
+                /* 细节内容 */
+                .detail-content {
+                    font-size: 15px !important;
+                }
+                
+                /* 确保最小可读性 */
+                * {
+                    -webkit-text-size-adjust: 100%; /* 防止iOS缩放 */
+                }
+                
+                /* 小屏手机微调 */
+                @media (max-width: 375px) {
+                    body {
+                        font-size: 15px !important;
+                    }
+                    
+                    p, li {
+                        font-size: 15px !important;
+                    }
+                }
+            }
+                .nav-wrapper {
+                    margin-bottom: 20px;
+                }
+                
+                .nav-tabs {
+                    padding: 8px;
+                    gap: 8px;
+                }
+                
+                .nav-tabs-bottom {
+                    margin-top: 10px;
+                }
+                
+                .nav-tab {
+                    flex: 1 1 calc(50% - 4px);
+                    min-width: 0;
+                    font-size: 13px;
+                    padding: 10px 5px;
+                }
+            }
+            
+            .quick-btn {
+                padding: 12px;
+            }
+            
+            .quick-btn .icon {
+                font-size: 1.5em;
+            }
+            
+            .process-card {
+                padding: 20px;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+            }
+            
+            h3 {
+                font-size: 1.2em;
+            }
+            
+            .checklist-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .checklist-icon {
+                margin-bottom: 10px;
+            }
+            
+            /* 表格横向滚动 */
+            .info-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .time-card {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .time-icon {
+                margin: 0 auto;
+            }
+            
+            /* 包装标准移动端适配 */
+            .standard-section {
+                padding: 15px;
+            }
+            
+            .standard-item {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .item-number {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+            
+            .item-content {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .simple-table {
+                font-size: 13px;
+            }
+            
+            .simple-table td:first-child {
+                width: 90px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 门店与跟单工作配合</h1>
+            <p style="font-size: 1.8em; font-weight: 600; margin-top: 10px;">操作手册</p>
+        </div>
+        
+        <!-- 导航标签 -->
+        <div class="nav-wrapper">
+            <div class="nav-tabs nav-tabs-top">
+                <button class="nav-tab active" onclick="showSection('workflow')">核心工作流</button>
+                <button class="nav-tab" onclick="showSection('receiving')">收货验收</button>
+                <button class="nav-tab" onclick="showSection('aftersales')">售后服务</button>
+                <button class="nav-tab" onclick="showSection('return')">退货流程</button>
+                <button class="nav-tab" onclick="showSection('exchange')">换货流程</button>
+            </div>
+            <div class="nav-tabs nav-tabs-bottom">
+                <button class="nav-tab" onclick="showSection('transfer')">调货管理</button>
+                <button class="nav-tab" onclick="showSection('communication')">沟通协作</button>
+                <button class="nav-tab" onclick="showSection('expense')">费用管理</button>
+                <button class="nav-tab" onclick="showSection('system')">系统操作</button>
+                <button class="nav-tab" onclick="showSection('contacts')">联系方式</button>
+            </div>
+        </div>
+        
+        <!-- 核心工作流 -->
+        <div id="workflow" class="content-section active">
+            <div class="card">
+                <h2>⚡ 核心工作流程</h2>
+                
+                <!-- 时间轴 -->
+                <h3>⏰ 工作时间轴总览</h3>
+                <div class="timeline-horizontal">
+                    <div class="timeline-node">
+                        <div class="node-icon">📋</div>
+                        <div class="node-title">准备阶段</div>
+                        <div class="node-time">17:00前</div>
+                    </div>
+                    <div class="timeline-connector"></div>
+                    <div class="timeline-node">
+                        <div class="node-icon">🎬</div>
+                        <div class="node-title">直播销售</div>
+                        <div class="node-time">19:00</div>
+                    </div>
+                    <div class="timeline-connector"></div>
+                    <div class="timeline-node">
+                        <div class="node-icon">📊</div>
+                        <div class="node-title">订单处理</div>
+                        <div class="node-time">直播后</div>
+                    </div>
+                    <div class="timeline-connector"></div>
+                    <div class="timeline-node">
+                        <div class="node-icon">🚚</div>
+                        <div class="node-title">发货</div>
+                        <div class="node-time">次日</div>
+                    </div>
+                    <div class="timeline-connector"></div>
+                    <div class="timeline-node">
+                        <div class="node-icon">📦</div>
+                        <div class="node-title">收货验收</div>
+                        <div class="node-time">3-5天</div>
+                    </div>
+                    <div class="timeline-connector"></div>
+                    <div class="timeline-node">
+                        <div class="node-icon">🔄</div>
+                        <div class="node-title">售后期</div>
+                        <div class="node-time">15天</div>
+                    </div>
+                </div>
+                
+                <div class="alert-box alert-info">
+                    <h4>💡 关键时间节点</h4>
+                    <div class="timeline-grid">
+                        <div class="time-card">
+                            <div class="time-icon">⏰</div>
+                            <div class="time-content">
+                                <div class="time-label">14:00</div>
+                                <div class="time-desc">商品下链接<br><small>以中控通知为准</small></div>
+                            </div>
+                        </div>
+                        <div class="time-card">
+                            <div class="time-icon">📋</div>
+                            <div class="time-content">
+                                <div class="time-label">17:00前</div>
+                                <div class="time-desc">发送卖品信息</div>
+                            </div>
+                        </div>
+                        <div class="time-card">
+                            <div class="time-icon">🎬</div>
+                            <div class="time-content">
+                                <div class="time-label">19:00</div>
+                                <div class="time-desc">直播开始</div>
+                            </div>
+                        </div>
+                        <div class="time-card">
+                            <div class="time-icon">❌</div>
+                            <div class="time-content">
+                                <div class="time-label">当天12:00前</div>
+                                <div class="time-desc">可直接取消订单</div>
+                            </div>
+                        </div>
+                        <div class="time-card">
+                            <div class="time-icon">➖</div>
+                            <div class="time-content">
+                                <div class="time-label">次日14:00前</div>
+                                <div class="time-desc">可以减单</div>
+                            </div>
+                        </div>
+                        <div class="time-card">
+                            <div class="time-icon">📦</div>
+                            <div class="time-content">
+                                <div class="time-label">25天内</div>
+                                <div class="time-desc">退货截止<br><small>从出单号起算</small></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 直播销售流程 -->
+                <h3>一、直播销售流程</h3>
+                <div class="process-cards">
+                    <div class="process-card" data-step="1">
+                        <h4>直播前准备</h4>
+                        <ul>
+                            <li>17:00前收到卖品信息</li>
+                            <li>检查库存情况</li>
+                            <li>准备客户群通知</li>
+                        </ul>
+                    </div>
+                    <div class="process-card" data-step="2">
+                        <h4>直播中操作</h4>
+                        <ul>
+                            <li>19:00开播</li>
+                            <li>协助客户下单</li>
+                            <li>记录特殊需求</li>
+                        </ul>
+                    </div>
+                    <div class="process-card" data-step="3">
+                        <h4>直播后处理</h4>
+                        <ul>
+                            <li>核对订单信息</li>
+                            <li>统计销售数据</li>
+                            <li>次日制作发货表</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 订单处理流程 -->
+                <h3 id="add-order">二、订单处理与加单</h3>
+                <div class="alert-box alert-warning">
+                    <h4>⚠️ 订单变更时间限制</h4>
+                    <ul>
+                        <li><strong>取消订单：</strong>顾客想取消订单，店长需在第二天下链接前和跟单沟通减单数量</li>
+                        <li><strong>加减单（补单）：</strong>店长想加减单，跟单先确认可行后才能操作</li>
+                    </ul>
+                </div>
+                
+                <div class="card" style="background:#f8f9fa;">
+                    <h4>📝 加单标准（每周三）</h4>
+                    <ul>
+                        <li>❌ <strong>小品不支持加单</strong></li>
+                        <li>✅ <strong>大单标准：</strong>商品单价≥99元</li>
+                        <li>📋 <strong>流程：</strong>加单前一天编辑好内容 → 第二天获取打款卡号 → 完成后群内公布</li>
+                        <li>⚠️ <strong>不能加单的产品，</strong>跟单需要告知店长</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 收货验收 -->
+        <div id="receiving" class="content-section">
+            <div class="card">
+                <h2>📦 收货验收管理</h2>
+                
+                <h3>一、收货验收流程</h3>
+                <div class="checklist">
+                    <div class="checklist-item">
+                        <div class="checklist-icon">1</div>
+                        <span><strong>收到单号：</strong>跟单第一时间发到店长群，备注退货截止时间（出单号25天内）</span>
+                    </div>
+                    <div class="checklist-item">
+                        <div class="checklist-icon">2</div>
+                        <span><strong>超时提醒：</strong>超过3天没有单号，询问跟单原因</span>
+                    </div>
+                    <div class="checklist-item">
+                        <div class="checklist-icon">3</div>
+                        <span><strong>收货检查：</strong>第一时间检查外箱破损情况</span>
+                    </div>
+                    <div class="checklist-item">
+                        <div class="checklist-icon">4</div>
+                        <span><strong>拍摄证据：</strong>必须拍实物面单+完整开箱视频<span class="tag tag-must">必须</span></span>
+                    </div>
+                    <div class="checklist-item">
+                        <div class="checklist-icon">5</div>
+                        <span><strong>破损处理：</strong>如有破损，正常签收，当面清点，保留所有证据</span>
+                    </div>
+                    <div class="checklist-item">
+                        <div class="checklist-icon">6</div>
+                        <span><strong>核对数量：</strong>清点货物数量，核对是否与订单一致</span>
+                    </div>
+                </div>
+                
+                <div class="alert-box alert-danger">
+                    <h4>🎥 开箱视频要求</h4>
+                    <p><strong>注意！开箱视频指的是还没打开箱子开始的录制视频！</strong></p>
+                    <p>如有破损，正常签收、点数，一定要拍面单照片和开箱视频</p>
+                    <p>⚠️ <strong>没有这些证据一概不认！</strong></p>
+                </div>
+                
+                <h3>二、收货问题处理（货损/少货/错货）</h3>
+                
+                <div class="alert-box alert-warning">
+                    <h4>📸 证据要求</h4>
+                    <p>所有收货问题都需要提供：<strong>完整开箱视频 + 照片 + 快递面单</strong></p>
+                    <p>如提供不了开箱视频和照片则无法跟厂家申请售后，需门店自行承担</p>
+                </div>
+                
+                <div class="process-cards">
+                    <div class="process-card" data-step="1">
+                        <h4>📦 货损处理</h4>
+                        <ul>
+                            <li>立即拍照记录破损情况</li>
+                            <li>提供完整证据给跟单</li>
+                            <li>跟单第一时间报厂家</li>
+                            <li>厂家确认后退货或补发</li>
+                            <li>损失由厂家承担</li>
+                        </ul>
+                    </div>
+                    <div class="process-card" data-step="2">
+                        <h4>❓ 少货处理</h4>
+                        <ul>
+                            <li>先自查是否有物流滞留</li>
+                            <li>确认是否有未到货情况</li>
+                            <li>提供开箱视频+面单</li>
+                            <li>跟单联系厂家补发</li>
+                            <li>跟单提供补货单号</li>
+                        </ul>
+                    </div>
+                    <div class="process-card" data-step="3">
+                        <h4>❌ 错货处理</h4>
+                        <ul>
+                            <li>拍照记录错发商品</li>
+                            <li>门店报跟单</li>
+                            <li>跟单提供厂家退货地址</li>
+                            <li>门店自行退回厂家</li>
+                            <li>运费门店垫付，跟单报销</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <table class="info-table">
+                    <tr>
+                        <th>问题类型</th>
+                        <th>处理方式</th>
+                        <th>费用承担</th>
+                        <th>注意事项</th>
+                    </tr>
+                    <tr>
+                        <td>外箱破损</td>
+                        <td>做破损签收，不能拒收</td>
+                        <td>厂家</td>
+                        <td>必须当面清点</td>
+                    </tr>
+                    <tr>
+                        <td>商品破损</td>
+                        <td>提供证据，厂家补发或退款</td>
+                        <td>厂家</td>
+                        <td>保留破损商品</td>
+                    </tr>
+                    <tr>
+                        <td>数量缺少</td>
+                        <td>核实后厂家补发</td>
+                        <td>厂家</td>
+                        <td>先排除物流问题</td>
+                    </tr>
+                    <tr>
+                        <td>发错货</td>
+                        <td>退回厂家，重新发货</td>
+                        <td>厂家（运费垫付后报销）</td>
+                        <td>按模板提供信息</td>
+                    </tr>
+                </table>
+                
+                <div class="alert-box alert-info">
+                    <h4>💡 重要提醒</h4>
+                    <ul>
+                        <li>收到货后必须第一时间核对数量、检查货品是否有破损</li>
+                        <li>厂家补货后，跟单会提供补货单号给门店</li>
+                        <li>所有因厂家原因产生的费用，都可以申请报销</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 售后服务中心 -->
+        <div id="aftersales" class="content-section">
+            <div class="card">
+                <h2>🛠️ 售后服务总览</h2>
+                
+                <!-- 优化的售后时效提醒 -->
+                <h3>⏰ 售后时效关键节点</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin: 20px 0;">
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 10px; border-left: 4px solid #ffc107;">
+                        <h4 style="color: #856404; margin-bottom: 5px;">🕐 直播当天12:00前</h4>
+                        <p style="margin: 0; font-size: 14px;">可直接取消订单<br>货款原路退回</p>
+                    </div>
+                    <div style="background: #cff4fc; padding: 15px; border-radius: 10px; border-left: 4px solid #0dcaf0;">
+                        <h4 style="color: #055160; margin-bottom: 5px;">🕑 12:00-次日14:00</h4>
+                        <p style="margin: 0; font-size: 14px;">可以减单<br>店长垫付，跟单报销</p>
+                    </div>
+                    <div style="background: #f8d7da; padding: 15px; border-radius: 10px; border-left: 4px solid #dc3545;">
+                        <h4 style="color: #721c24; margin-bottom: 5px;">🕒 次日14:00后</h4>
+                        <p style="margin: 0; font-size: 14px;">不再接受减单<br>发货表已提交</p>
+                    </div>
+                    <div style="background: #d4edda; padding: 15px; border-radius: 10px; border-left: 4px solid #28a745;">
+                        <h4 style="color: #155724; margin-bottom: 5px;">📅 15天内</h4>
+                        <p style="margin: 0; font-size: 14px;">无理由退换货<br>不影响二次销售</p>
+                    </div>
+                    <div style="background: #e7e8ea; padding: 15px; border-radius: 10px; border-left: 4px solid #6c757d;">
+                        <h4 style="color: #495057; margin-bottom: 5px;">📆 20天左右</h4>
+                        <p style="margin: 0; font-size: 14px;">建议完成退货<br>预留5天二次销售</p>
+                    </div>
+                    <div style="background: #f5e6ff; padding: 15px; border-radius: 10px; border-left: 4px solid #764ba2;">
+                        <h4 style="color: #4a148c; margin-bottom: 5px;">⏳ 25天内</h4>
+                        <p style="margin: 0; font-size: 14px;">退货截止时间<br>从出单号起算</p>
+                    </div>
+                </div>
+                
+                <h3>📋 质量问题界定标准</h3>
+                <div class="info-table">
+                    <table style="width:100%;">
+                        <tr>
+                            <th width="20%">问题类型</th>
+                            <th width="25%">界定标准</th>
+                            <th width="25%">处理方式</th>
+                            <th width="30%">所需证据</th>
+                        </tr>
+                        <tr style="background: #fff9f9;">
+                            <td><strong>收货时问题</strong></td>
+                            <td colspan="3" style="text-align: center; color: #dc3545;">请查看【收货验收】板块</td>
+                        </tr>
+                        <tr>
+                            <td><strong>产品质量问题</strong></td>
+                            <td>
+                                • 功能性缺陷<br>
+                                • 材质问题<br>
+                                • 做工瑕疵
+                            </td>
+                            <td>
+                                退货或换货<br>
+                                费用由厂家承担
+                            </td>
+                            <td>
+                                • 问题照片/视频<br>
+                                • 购买凭证<br>
+                                • 问题描述
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>使用不当</strong></td>
+                            <td>
+                                • 操作错误<br>
+                                • 保存不当<br>
+                                • 超出使用范围
+                            </td>
+                            <td>
+                                提供使用指导<br>
+                                不属于质量问题
+                            </td>
+                            <td>
+                                • 使用情况说明<br>
+                                • 现场照片
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>正常损耗</strong></td>
+                            <td>
+                                • 正常磨损<br>
+                                • 自然老化<br>
+                                • 使用痕迹
+                            </td>
+                            <td>
+                                说明情况<br>
+                                不予退换
+                            </td>
+                            <td>
+                                • 使用时长<br>
+                                • 损耗照片
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>食品问题</strong></td>
+                            <td>
+                                • 保质期内变质<br>
+                                • 包装破损<br>
+                                • 异物异味
+                            </td>
+                            <td>
+                                立即退货退款<br>
+                                上报跟单处理
+                            </td>
+                            <td>
+                                • 生产日期照片<br>
+                                • 问题产品照片<br>
+                                • 保存环境说明
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="alert-box alert-info">
+                    <h4>💡 处理原则</h4>
+                    <ul>
+                        <li>15天内优先按无理由退换货政策处理</li>
+                        <li>超过15天的质量问题需要跟单与厂家确认</li>
+                        <li>所有质量问题都需要提供充分的证据材料</li>
+                        <li>食品类商品的质量问题需要特别重视，立即处理</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 退货流程 -->
+        <div id="return" class="content-section">
+            <div class="card">
+                <h2>↩️ 退货流程管理</h2>
+                
+                <div class="alert-box alert-info">
+                    <h4>💡 系统说明</h4>
+                    <p>由于后台系统还不完善，暂时不能直接在后台操作退货。店长需要垫付一段时间，由跟单登记减单后报销。系统正在加紧升级中。</p>
+                </div>
+                
+                <h3>一、退货时间节点处理</h3>
+                <table class="info-table">
+                    <tr>
+                        <th width="20%">时间节点</th>
+                        <th width="40%">处理方式</th>
+                        <th width="40%">注意事项</th>
+                    </tr>
+                    <tr>
+                        <td><strong>直播当天12:00前</strong></td>
+                        <td>团长可在后台直接取消订单，货款原路退回</td>
+                        <td>取消不了找跟单处理</td>
+                    </tr>
+                    <tr>
+                        <td><strong>12:00后-次日14:00前</strong></td>
+                        <td>
+                            1. 店长先垫付货款给顾客<br>
+                            2. 跟单记减单，发货表中减出不发货<br>
+                            3. 累计500元以上走内部流程报销
+                        </td>
+                        <td><span class="tag tag-important">减单时必须告知跟单系统全名</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>次日14:00后</strong></td>
+                        <td>
+                            1. 店长垫付货款<br>
+                            2. 将货物寄回云仓<br>
+                            3. 清点无误后报销
+                        </td>
+                        <td>发货表提交后不再接受减单</td>
+                    </tr>
+                </table>
+                
+                <h3>二、退货包装标准</h3>
+                
+                <div class="packing-standard-container">
+                    <!-- 外箱要求 -->
+                    <div class="standard-group">
+                        <div class="group-title">
+                            <span class="title-icon">📦</span>
+                            <span class="title-text">外箱要求</span>
+                        </div>
+                        
+                        <div class="standard-list">
+                            <div class="standard-row">
+                                <div class="row-number">1</div>
+                                <div class="row-content">
+                                    <div class="row-title">箱外标记格式：XXX公司 + XXX直播间 + XXX店</div>
+                                    <div class="row-detail">示例：福州公司香山真选福州一店</div>
+                                </div>
+                            </div>
+                            
+                            <div class="standard-row">
+                                <div class="row-number">2</div>
+                                <div class="row-content">
+                                    <div class="row-title">物流方式：寄件时选择"上门取件"，不要选"自行送达"</div>
+                                    <div class="row-detail">退货量大时，等快递上门取件更高效，避免自己送货耽误时间</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 清单填写 -->
+                    <div class="standard-group">
+                        <div class="group-title">
+                            <span class="title-icon">📋</span>
+                            <span class="title-text">清单填写</span>
+                        </div>
+                        
+                        <div class="standard-list">
+                            <div class="standard-row">
+                                <div class="row-number">3</div>
+                                <div class="row-content">
+                                    <div class="row-title">必放清单：每箱内放对应商品货物清单表</div>
+                                </div>
+                            </div>
+                            
+                            <div class="standard-row">
+                                <div class="row-number">4</div>
+                                <div class="row-content">
+                                    <div class="row-title">名称规范：货物名称必须写全称，服装类需增加货号</div>
+                                </div>
+                            </div>
+                            
+                            <div class="standard-row">
+                                <div class="row-number">5</div>
+                                <div class="row-content">
+                                    <div class="row-title">数量单位：使用最小单位</div>
+                                    <div class="row-example">
+                                        <span class="example-correct">✅ 正确：5盒、10个、3件</span>
+                                        <span class="example-wrong">❌ 错误：5份</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 商品包装 -->
+                    <div class="standard-group">
+                        <div class="group-title">
+                            <span class="title-icon">📦</span>
+                            <span class="title-text">商品包装</span>
+                        </div>
+                        
+                        <div class="standard-list">
+                            <div class="standard-row">
+                                <div class="row-number">6</div>
+                                <div class="row-content">
+                                    <div class="row-title">基本原则：一个包装袋只放一个产品</div>
+                                </div>
+                            </div>
+                            
+                            <div class="standard-row">
+                                <div class="row-number">7</div>
+                                <div class="row-content">
+                                    <div class="row-title">特殊商品处理：</div>
+                                    <div class="special-handling">
+                                        <div class="handling-item">
+                                            <span class="item-emoji">🔴</span>
+                                            <span class="item-name">破损商品</span>
+                                            <span class="item-action">单独装袋 + 贴"破损"标签</span>
+                                        </div>
+                                        <div class="handling-item">
+                                            <span class="item-emoji">📱</span>
+                                            <span class="item-name">电子产品</span>
+                                            <span class="item-action">特别做好区分标记</span>
+                                        </div>
+                                        <div class="handling-item">
+                                            <span class="item-emoji">🍔</span>
+                                            <span class="item-name">开封食品</span>
+                                            <span class="item-action">单独封装</span>
+                                        </div>
+                                        <div class="handling-item">
+                                            <span class="item-emoji">💧</span>
+                                            <span class="item-name">液体商品</span>
+                                            <span class="item-action">与其他物品分开放置</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>三、退货流程图</h3>
+                <div class="process-cards">
+                    <div class="process-card" data-step="1">
+                        <h4>客户申请退货</h4>
+                        <ul>
+                            <li>确认退货时间</li>
+                            <li>判断处理方式</li>
+                            <li>记录退货原因</li>
+                        </ul>
+                    </div>
+                    <div class="process-card" data-step="2">
+                        <h4>店长处理</h4>
+                        <ul>
+                            <li>按时间节点处理</li>
+                            <li>垫付退款（如需）</li>
+                            <li>通知跟单登记</li>
+                        </ul>
+                    </div>
+                    <div class="process-card" data-step="3">
+                        <h4>商品寄回</h4>
+                        <ul>
+                            <li>按标准包装</li>
+                            <li>寄回云仓地址</li>
+                            <li>提供运单号</li>
+                        </ul>
+                    </div>
+                    <div class="process-card" data-step="4">
+                        <h4>费用报销</h4>
+                        <ul>
+                            <li>整理报销凭证</li>
+                            <li>提交跟单审核</li>
+                            <li>等待款项到账</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="alert-box alert-success">
+                    <h4>✅ 退货政策</h4>
+                    <ul>
+                        <li>支持15天无理由退换货（不影响二次销售）</li>
+                        <li>店长留5天二次销售时间</li>
+                        <li>即商品在直播间销售20天左右处理退货</li>
+                        <li>退货截止时间为出单号后25天内</li>
+                    </ul>
+                </div>
+                
+                <div class="alert-box alert-warning">
+                    <h4>💰 费用说明</h4>
+                    <p>• 门店退货到云仓运费：门店承担</p>
+                    <p>• 客户退货款：店长垫付，跟单报销（累计500元以上）</p>
+                    <p>• 详细费用规则请查看【费用结算】板块</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 换货流程 -->
+        <div id="exchange" class="content-section">
+            <div class="card">
+                <h2>🔄 换货流程管理</h2>
+                
+                <h3>一、换货申请条件</h3>
+                <div class="condition-container">
+                    <div class="condition-column can-exchange">
+                        <div class="condition-header">
+                            <span class="condition-icon">✅</span>
+                            <span class="condition-title">可换货情况</span>
+                        </div>
+                        <div class="condition-list">
+                            <div class="condition-item">
+                                <span class="item-index">1</span>
+                                <span class="item-emoji">📏</span>
+                                <span class="item-text">尺码不合适</span>
+                            </div>
+                            <div class="condition-item">
+                                <span class="item-index">2</span>
+                                <span class="item-emoji">🎨</span>
+                                <span class="item-text">颜色/款式错误</span>
+                            </div>
+                            <div class="condition-item">
+                                <span class="item-index">3</span>
+                                <span class="item-emoji">⚠️</span>
+                                <span class="item-text">商品质量问题</span>
+                            </div>
+                            <div class="condition-item">
+                                <span class="item-index">4</span>
+                                <span class="item-emoji">📅</span>
+                                <span class="item-text">15天内无理由换货</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="condition-column cannot-exchange">
+                        <div class="condition-header">
+                            <span class="condition-icon">❌</span>
+                            <span class="condition-title">不可换货情况</span>
+                        </div>
+                        <div class="condition-list">
+                            <div class="condition-item">
+                                <span class="item-index">1</span>
+                                <span class="item-emoji">💔</span>
+                                <span class="item-text">影响二次销售</span>
+                            </div>
+                            <div class="condition-item">
+                                <span class="item-index">2</span>
+                                <span class="item-emoji">⏰</span>
+                                <span class="item-text">超过换货时限</span>
+                            </div>
+                            <div class="condition-item">
+                                <span class="item-index">3</span>
+                                <span class="item-emoji">📦</span>
+                                <span class="item-text">无货可换</span>
+                            </div>
+                            <div class="condition-item">
+                                <span class="item-index">4</span>
+                                <span class="item-emoji">🏷️</span>
+                                <span class="item-text">特价清仓商品</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>二、换货要求与提醒</h3>
+                <div class="requirements-grid">
+                    <div class="requirement-card">
+                        <div class="requirement-icon">📦</div>
+                        <div class="requirement-content">
+                            <div class="requirement-title">商品要求</div>
+                            <div class="requirement-text">
+                                • 保持全新状态，不影响二次销售<br>
+                                • 保留所有标签、包装、配件、赠品
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="requirement-card">
+                        <div class="requirement-icon">📝</div>
+                        <div class="requirement-content">
+                            <div class="requirement-title">资料准备</div>
+                            <div class="requirement-text">
+                                • 填写换货信息模板（跟单提供）<br>
+                                • 质量问题需提供照片证据
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="requirement-card">
+                        <div class="requirement-icon">💰</div>
+                        <div class="requirement-content">
+                            <div class="requirement-title">费用说明</div>
+                            <div class="requirement-text">
+                                • 换货运费由福州公司和门店共同承担<br>
+                                • 具体分担比例咨询跟单
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="requirement-card">
+                        <div class="requirement-icon">⏰</div>
+                        <div class="requirement-content">
+                            <div class="requirement-title">时效说明</div>
+                            <div class="requirement-text">
+                                • 换货周期一般为7-10个工作日<br>
+                                • 特殊商品可能延长
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="requirement-card">
+                        <div class="requirement-icon">💡</div>
+                        <div class="requirement-content">
+                            <div class="requirement-title">操作建议</div>
+                            <div class="requirement-text">
+                                • 换货前先确认库存，避免无货可换<br>
+                                • 尺码类商品建议提供尺码表参考
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>三、换货操作流程</h3>
+                <div class="process-cards">
+                    <div class="process-card" data-step="1">
+                        <h4>客户申请</h4>
+                        <ul>
+                            <li>确认换货原因</li>
+                            <li>核实商品状态</li>
+                            <li>确认有货可换</li>
+                            <li>联系跟单报备</li>
+                        </ul>
+                    </div>
+                    <div class="process-card" data-step="2">
+                        <h4>获取地址</h4>
+                        <ul>
+                            <li>跟单提供厂家地址</li>
+                            <li>告知客户寄回要求</li>
+                            <li>按模板填写信息</li>
+                            <li>记录换货需求</li>
+                        </ul>
+                    </div>
+                    <div class="process-card" data-step="3">
+                        <h4>商品寄回</h4>
+                        <ul>
+                            <li>门店自行寄回厂家</li>
+                            <li>保留快递单据</li>
+                            <li>提供单号给跟单</li>
+                            <li>跟踪物流状态</li>
+                        </ul>
+                    </div>
+                    <div class="process-card" data-step="4">
+                        <h4>换货发出</h4>
+                        <ul>
+                            <li>厂家收货验收</li>
+                            <li>安排新品发货</li>
+                            <li>跟单提供新单号</li>
+                            <li>通知客户查收</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 调货管理 -->
+        <div id="transfer" class="content-section">
+            <div class="card">
+                <h2>🚚 调货管理</h2>
+                
+                <div class="alert-box alert-warning">
+                    <h4>⚠️ 调货规则与限制</h4>
+                    <ul>
+                        <li><strong>调货范围：</strong>只能同一区域品牌间调货，不能跨区调货（如：仅限香山真选/福火火等下属门店之间）</li>
+                        <li><strong>信息报备：</strong>调货由调入门店发给跟单调货信息，方便给调入门店加销量</li>
+                        <li><strong>云仓调货：</strong>如在云仓调货，则做现金加单处理</li>
+                        <li><strong>费用承担：</strong>调货所产生的费用由调入门店支付</li>
+                    </ul>
+                </div>
+                
+                <h3>调货操作流程</h3>
+                <div class="process-cards">
+                    <div class="process-card" data-step="1">
+                        <h4>调入方操作</h4>
+                        <ul>
+                            <li>向门店申请调货</li>
+                            <li>立即支付货款给调出门店</li>
+                            <li>向跟单报备</li>
+                            <li>跟单做加单处理，增加销量</li>
+                        </ul>
+                    </div>
+                    <div class="process-card" data-step="2">
+                        <h4>调出方操作</h4>
+                        <ul>
+                            <li>确认收到货款</li>
+                            <li>跟单做减单处理</li>
+                            <li>将货款退给顾客或登记入账</li>
+                            <li>安排货物交接</li>
+                        </ul>
+                    </div>
+                    <div class="process-card" data-step="3">
+                        <h4>完成调货</h4>
+                        <ul>
+                            <li>调货费用由调入门店承担</li>
+                            <li>将调货模板发给跟单</li>
+                            <li>云仓调货做现金加单处理</li>
+                            <li>跟单确认并更新记录</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card" style="background: #fafafa;">
+                    <h3>🏢 公司指定的云仓地址</h3>
+                    <div class="contact-info">
+                        <p><strong>部门：</strong>门店售后部（送到办公室）</p>
+                        <p><strong>电话：</strong>15505902093</p>
+                        <p><strong>地址：</strong>福建省宁德市蕉城区宁川北路28号金国大厦1106</p>
+                        <p style="color:#666;margin-top:10px;">后续云仓地址联系方式如有改动会第一时间通知门店</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 沟通协作 -->
+        <div id="communication" class="content-section">
+            <div class="card">
+                <h2>💬 沟通协作规范</h2>
+                
+                <h3>一、群组管理体系</h3>
+                <div class="group-flow-container">
+                    <div class="group-flow-item">
+                        <div class="flow-number">1</div>
+                        <div class="flow-title">客群（会员群）</div>
+                        <div class="flow-desc">每个客户群都必须拉入负责的跟单人员</div>
+                    </div>
+                    
+                    <div class="flow-arrow">→</div>
+                    
+                    <div class="group-flow-item">
+                        <div class="flow-number">2</div>
+                        <div class="flow-title">跟单服务群</div>
+                        <div class="flow-desc">跟单人员服务多个店长，便于沟通协作</div>
+                    </div>
+                </div>
+                
+                <div class="group-details-container">
+                    <div class="detail-card">
+                        <div class="detail-header">
+                            <span class="detail-icon">👥</span>
+                            <span>客群管理要点</span>
+                        </div>
+                        <div class="detail-content">
+                            <ul>
+                                <li><strong>群组用途：</strong>服务客户、发布商品、处理售后</li>
+                                <li><strong>必须要求：</strong>每个客群必须拉入跟单人员</li>
+                                <li><strong>自查提醒：</strong>店长请立即检查所有客户群</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-card">
+                        <div class="detail-header">
+                            <span class="detail-icon">💼</span>
+                            <span>服务群管理要点</span>
+                        </div>
+                        <div class="detail-content">
+                            <ul>
+                                <li><strong>成员构成：</strong>跟单 + 店长 + 授权店员</li>
+                                <li><strong>店员授权时机：</strong></li>
+                            </ul>
+                            <div class="auth-timing">
+                                <div class="timing-item">• 店长工作繁忙需要助手</div>
+                                <div class="timing-item">• 店长外出或休假期间</div>
+                                <div class="timing-item">• 紧急事务需要多人配合</div>
+                                <div class="timing-item">• 店员熟悉流程且值得信任</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>二、工作配合要点</h3>
+                <div class="alert-box alert-danger">
+                    <h4>⚠️ 核心原则</h4>
+                    <p><strong>以下【发货前/收货后】各事务均须由店长与跟单员进行沟通处理！</strong></p>
+                </div>
+                
+                <div class="cooperation-grid">
+                    <div class="cooperation-item">
+                        <div class="coop-number">1</div>
+                        <div class="coop-content">
+                            <strong>统计客户下单</strong>
+                            <p>直播间销售订单统计</p>
+                        </div>
+                    </div>
+                    
+                    <div class="cooperation-item">
+                        <div class="coop-number">2</div>
+                        <div class="coop-content">
+                            <strong>统计店长加单</strong>
+                            <p>客户不会操作时代下单（符合加单标准）</p>
+                        </div>
+                    </div>
+                    
+                    <div class="cooperation-item">
+                        <div class="coop-number">3</div>
+                        <div class="coop-content">
+                            <strong>门店互相调货</strong>
+                            <p>同直播间门店间临时调货库存</p>
+                        </div>
+                    </div>
+                    
+                    <div class="cooperation-item">
+                        <div class="coop-number">4</div>
+                        <div class="coop-content">
+                            <strong>收货验收</strong>
+                            <p>跟单提供收货信息和教学</p>
+                        </div>
+                    </div>
+                    
+                    <div class="cooperation-item">
+                        <div class="coop-number">5</div>
+                        <div class="coop-content">
+                            <strong>售后退货</strong>
+                            <p>质量/数量问题协同处理</p>
+                        </div>
+                    </div>
+                    
+                    <div class="cooperation-item">
+                        <div class="coop-number">6</div>
+                        <div class="coop-content">
+                            <strong>费用报销</strong>
+                            <p>店长发明细，跟单审核提交</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert-box alert-success">
+                    <h4>💡 沟通技巧</h4>
+                    <ul>
+                        <li>重要事项请@跟单确认，避免信息遗漏</li>
+                        <li>紧急问题可电话沟通，提高处理效率</li>
+                        <li>定期整理群聊记录，重要信息做好备份</li>
+                        <li>保持良好沟通氛围，互相理解配合</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 费用管理 -->
+        <div id="expense" class="content-section">
+            <div class="card">
+                <h2>💰 费用管理中心</h2>
+                
+                <h3>一、费用承担规则（四大类型）</h3>
+                <div class="expense-types-container">
+                    <div class="expense-type-card" style="border-top: 4px solid #f39c12;">
+                        <div class="expense-type-header">
+                            <span class="expense-icon">📦</span>
+                            <span class="expense-title">退货相关费用</span>
+                        </div>
+                        <div class="expense-items">
+                            <div class="expense-item">
+                                <span class="item-name">客户退货款</span>
+                                <span class="item-rule">公司承担</span>
+                                <span class="item-note">店长垫付，跟单报销</span>
+                                <span class="item-limit">累计500元以上统一报销</span>
+                            </div>
+                            <div class="expense-item">
+                                <span class="item-name">门店→云仓退货运费</span>
+                                <span class="item-rule">门店承担</span>
+                                <span class="item-note">门店自行支付</span>
+                                <span class="item-limit">正常退货运费</span>
+                            </div>
+                            <div class="expense-item">
+                                <span class="item-name">云仓→厂家退货运费</span>
+                                <span class="item-rule">总部承担</span>
+                                <span class="item-note">总部直接支付</span>
+                                <span class="item-limit">二次销售商品退回</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="expense-type-card" style="border-top: 4px solid #3498db;">
+                        <div class="expense-type-header">
+                            <span class="expense-icon">🔄</span>
+                            <span class="expense-title">换货相关费用</span>
+                        </div>
+                        <div class="expense-items">
+                            <div class="expense-item">
+                                <span class="item-name">换货运费</span>
+                                <span class="item-rule">共同承担</span>
+                                <span class="item-note">福州公司+门店</span>
+                                <span class="item-limit">按比例分担</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="expense-type-card" style="border-top: 4px solid #e74c3c;">
+                        <div class="expense-type-header">
+                            <span class="expense-icon">⚠️</span>
+                            <span class="expense-title">质量问题费用</span>
+                        </div>
+                        <div class="expense-items">
+                            <div class="expense-item">
+                                <span class="item-name">质量问题退货运费</span>
+                                <span class="item-rule">厂家承担</span>
+                                <span class="item-note">门店垫付，跟单报销</span>
+                                <span class="item-limit">需提供完整证据</span>
+                            </div>
+                            <div class="expense-item">
+                                <span class="item-name">损耗商品费用</span>
+                                <span class="item-rule">公司承担</span>
+                                <span class="item-note">当地公司承担</span>
+                                <span class="item-limit">不能二次销售的商品</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="expense-type-card" style="border-top: 4px solid #9b59b6;">
+                        <div class="expense-type-header">
+                            <span class="expense-icon">🚚</span>
+                            <span class="expense-title">调货相关费用</span>
+                        </div>
+                        <div class="expense-items">
+                            <div class="expense-item">
+                                <span class="item-name">调货物流费</span>
+                                <span class="item-rule">调入门店</span>
+                                <span class="item-note">调入方直接支付</span>
+                                <span class="item-limit">调货产生的所有费用</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>二、报销流程与时间节点</h3>
+                <div class="reimbursement-timeline">
+                    <div class="timeline-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <div class="step-title">店长垫付</div>
+                            <div class="step-desc">先行垫付退货款或运费，保留所有凭证</div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-arrow">→</div>
+                    
+                    <div class="timeline-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <div class="step-title">累计金额</div>
+                            <div class="step-desc">累计达500元以上（建议每周整理一次）</div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-arrow">→</div>
+                    
+                    <div class="timeline-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <div class="step-title">提交明细</div>
+                            <div class="step-desc">填写报销模板，附上凭证，发给跟单</div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-arrow">→</div>
+                    
+                    <div class="timeline-step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <div class="step-title">审核报销</div>
+                            <div class="step-desc">跟单审核→财务审批→3-5工作日到账</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>三、报销材料清单</h3>
+                <div class="reimbursement-docs">
+                    <div class="doc-card">
+                        <div class="doc-header">💵 退货款报销</div>
+                        <div class="doc-list">
+                            <div class="doc-item">✓ 客户订单号</div>
+                            <div class="doc-item">✓ 退款转账截图</div>
+                            <div class="doc-item">✓ 跟单减单确认</div>
+                        </div>
+                    </div>
+                    
+                    <div class="doc-card">
+                        <div class="doc-header">📮 运费报销</div>
+                        <div class="doc-list">
+                            <div class="doc-item">✓ 快递单号</div>
+                            <div class="doc-item">✓ 运费发票/截图</div>
+                            <div class="doc-item">✓ 退货原因说明</div>
+                        </div>
+                    </div>
+                    
+                    <div class="doc-card">
+                        <div class="doc-header">🔍 质量问题报销</div>
+                        <div class="doc-list">
+                            <div class="doc-item">✓ 开箱视频</div>
+                            <div class="doc-item">✓ 问题照片</div>
+                            <div class="doc-item">✓ 快递面单</div>
+                            <div class="doc-item">✓ 跟单确认</div>
+                        </div>
+                    </div>
+                    
+                    <div class="doc-card">
+                        <div class="doc-header">📋 其他费用</div>
+                        <div class="doc-list">
+                            <div class="doc-item">✓ 具体费用说明</div>
+                            <div class="doc-item">✓ 相关凭证</div>
+                            <div class="doc-item">✓ 跟单审核意见</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert-box alert-success">
+                    <h4>💡 高效报销技巧</h4>
+                    <ul>
+                        <li><strong>固定时间：</strong>每周固定时间整理，避免遗漏</li>
+                        <li><strong>统一模板：</strong>使用跟单提供的报销模板</li>
+                        <li><strong>凭证清晰：</strong>电子凭证保存原图，不要压缩</li>
+                        <li><strong>及时沟通：</strong>有疑问及时与跟单确认</li>
+                        <li><strong>批量提交：</strong>累计到一定金额再提交，提高效率</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 系统操作 -->
+        <div id="system" class="content-section">
+            <div class="card">
+                <h2>💻 系统操作指南</h2>
+                
+                <h3>物流状态管理</h3>
+                <div class="alert-box alert-info">
+                    <h4>📱 核销规则</h4>
+                    <p><strong>货到后店长联系对应跟单修改物流状态，以方便给顾客核销取货</strong></p>
+                </div>
+                
+                <table class="info-table">
+                    <tr>
+                        <th>状态类型</th>
+                        <th>是否可核销</th>
+                        <th>说明</th>
+                    </tr>
+                    <tr>
+                        <td>待发货</td>
+                        <td>❌ 不可核销</td>
+                        <td>唯一不能核销的状态</td>
+                    </tr>
+                    <tr>
+                        <td>待提货</td>
+                        <td>✅ 可核销</td>
+                        <td>上传单号后系统自动生成</td>
+                    </tr>
+                    <tr>
+                        <td>配送中</td>
+                        <td>✅ 可核销</td>
+                        <td>上传单号后系统自动生成</td>
+                    </tr>
+                    <tr>
+                        <td>其他状态</td>
+                        <td>✅ 可核销</td>
+                        <td>非待发货状态均可</td>
+                    </tr>
+                </table>
+                
+                <div class="alert-box alert-warning">
+                    <h4>⚠️ 特殊情况处理</h4>
+                    <ul>
+                        <li>遇到非待发货状态核销不了：将订单号发给技术人员</li>
+                        <li>减单未发货的顾客：记住订单号，能核销时第一时间处理</li>
+                        <li>上传单号目的：确保店长能核销顾客订单，订单及时完成</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 联系方式 -->
+        <div id="contacts" class="content-section">
+            <div class="card">
+                <h2>📞 重要联系方式</h2>
+                
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; margin-bottom: 20px;">
+                    <h3 style="color: white; margin-bottom: 20px;">🏢 云仓地址信息</h3>
+                    <div style="background: white; color: #333; padding: 20px; border-radius: 10px;">
+                        <p><strong>部门：</strong>门店售后部（送到办公室）</p>
+                        <p><strong>电话：</strong>15505902093</p>
+                        <p><strong>地址：</strong>福建省宁德市蕉城区宁川北路28号金国大厦1106</p>
+                        <p style="color:#666; margin-top:15px;">⚠️ 地址如有改动会第一时间通知门店</p>
+                    </div>
+                </div>
+                
+                <div class="alert-box alert-success">
+                    <h4>💡 重要提醒</h4>
+                    <p><strong>请立即添加负责该门店的跟单人员</strong>，方便及时处理售后及报销等相关内容</p>
+                </div>
+                
+                <div class="checklist">
+                    <h4>联系清单</h4>
+                    <div class="checklist-item">
+                        <div class="checklist-icon">✓</div>
+                        <span>添加跟单微信<span class="tag tag-must">必须</span></span>
+                    </div>
+                    <div class="checklist-item">
+                        <div class="checklist-icon">✓</div>
+                        <span>加入跟单服务群</span>
+                    </div>
+                    <div class="checklist-item">
+                        <div class="checklist-icon">✓</div>
+                        <span>检查客户群是否都拉入跟单</span>
+                    </div>
+                    <div class="checklist-item">
+                        <div class="checklist-icon">✓</div>
+                        <span>保存云仓地址和联系方式</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 检测移动设备
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+        }
+        
+        // 初始化移动端优化
+        window.addEventListener('DOMContentLoaded', function() {
+            if (isMobileDevice()) {
+                // 为移动设备添加特殊类
+                document.body.classList.add('mobile-device');
+                
+                // 优化触摸滚动
+                document.addEventListener('touchstart', function() {}, {passive: true});
+                
+                // 处理表格横向滚动提示
+                const tables = document.querySelectorAll('.info-table');
+                tables.forEach(table => {
+                    if (table.scrollWidth > table.clientWidth) {
+                        const hint = document.createElement('div');
+                        hint.style.cssText = 'text-align: center; color: #999; font-size: 12px; margin: 5px 0;';
+                        hint.textContent = '← 左右滑动查看更多 →';
+                        table.parentNode.insertBefore(hint, table.nextSibling);
+                    }
+                });
+            }
+            
+            // 优化导航标签滚动
+            const navWrapper = document.querySelector('.nav-wrapper');
+            if (navWrapper && isMobileDevice()) {
+                navWrapper.style.overflowX = 'auto';
+                navWrapper.style.webkitOverflowScrolling = 'touch';
+            }
+        });
+        
+        // 切换主要标签页
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            document.getElementById(sectionId).classList.add('active');
+            
+            const tabs = document.querySelectorAll('.nav-tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+        
+        // 折叠面板控制
+        function toggleAccordion(header) {
+            const item = header.parentElement;
+            const wasActive = item.classList.contains('active');
+            
+            // 关闭所有其他折叠项
+            const allItems = document.querySelectorAll('.accordion-item');
+            allItems.forEach(accordionItem => {
+                accordionItem.classList.remove('active');
+            });
+            
+            // 切换当前项
+            if (!wasActive) {
+                item.classList.add('active');
+            }
+        }
+        
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化第一个折叠面板为展开状态
+            const firstAccordion = document.querySelector('.accordion-item');
+            if(firstAccordion) {
+                firstAccordion.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>

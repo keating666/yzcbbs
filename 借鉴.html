@@ -1,0 +1,656 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Lee · 个人成长复盘报告</title>
+  <!-- TailwindCSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Framer Motion -->
+  <script src="https://unpkg.com/framer-motion@latest/dist/framer-motion.js"></script>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    html, body { background: #000; }
+    .bento { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+    @media (min-width: 640px) {
+      .bento { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width: 1024px) {
+      .bento { grid-template-columns: repeat(4, 1fr); }
+    }
+    .highlight { color: #00eaff; }
+    .highlight-bg { background: linear-gradient(90deg, rgba(0,234,255,0.8) 0%, rgba(0,234,255,0.15) 100%); }
+    .timeline-dot { box-shadow: 0 0 0 8px rgba(0,234,255,0.15); }
+    .fade-in { opacity: 0; transform: translateY(60px) scale(0.98); transition: all 1s cubic-bezier(.4,0,.2,1); }
+    .fade-in.visible { opacity: 1; transform: none; }
+    .bento-card { transition: box-shadow 0.3s, transform 0.3s; }
+    .bento-card:hover { box-shadow: 0 8px 32px 0 rgba(0,234,255,0.25); transform: translateY(-4px) scale(1.03);}
+    .big-num { font-size: 3.5rem; font-weight: 900; line-height: 1; }
+    .timeline-bar { background: linear-gradient(180deg, #00eaff 0%, rgba(0,234,255,0.1) 100%); }
+    .chart-bg { background: linear-gradient(120deg, rgba(0,234,255,0.08) 0%, rgba(0,234,255,0.01) 100%); }
+    .countdown-card { background: linear-gradient(90deg, rgba(0,234,255,0.18) 0%, rgba(0,234,255,0.05) 100%); border: 1.5px solid rgba(0,234,255,0.25); }
+    .countdown-num { font-size: 2.5rem; font-weight: 800; color: #00eaff; letter-spacing: 0.1em; }
+    .countdown-label { font-size: 1rem; color: #00eaff; opacity: 0.7; }
+  </style>
+</head>
+<body class="min-h-screen bg-black text-white font-sans tracking-wide">
+
+  <!-- 封面/首屏 -->
+  <section class="relative flex flex-col items-center justify-center min-h-screen px-6 py-12">
+    <div class="absolute inset-0 z-0 pointer-events-none" style="background: radial-gradient(circle at 60% 40%, rgba(0,234,255,0.18) 0%, transparent 70%);"></div>
+    <div class="z-10 flex flex-col items-center">
+      <h1 class="text-6xl sm:text-8xl font-extrabold highlight mb-6 tracking-tight drop-shadow-lg">成长复盘</h1>
+      <div class="text-3xl sm:text-4xl font-bold text-white mb-4">Lee's Growth Timeline</div>
+      <div class="flex items-center gap-4 mt-2">
+        <span class="text-2xl font-bold highlight">2025</span>
+        <i class="fa-solid fa-circle text-xs highlight"></i>
+        <span class="text-lg text-gray-400">AI · 复盘 · 行动</span>
+      </div>
+      <!-- 倒计时卡片 -->
+      <div class="mt-10 mb-4 w-full flex justify-center">
+        <div class="countdown-card rounded-2xl px-8 py-6 flex flex-col items-center shadow-xl">
+          <div class="text-lg font-bold text-white mb-2">距离2025年结束还有</div>
+          <div id="countdown" class="flex gap-6 items-end"></div>
+        </div>
+      </div>
+      <div class="mt-6 text-xl text-gray-300 max-w-xl text-center font-semibold">用系统思维和科技驱动，<span class="highlight">突破拖延</span>，专注成长。Bento Grid风格，数据与行动并重。</div>
+    </div>
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 animate-bounce">
+      <i class="fa-solid fa-chevron-down text-4xl highlight"></i>
+    </div>
+  </section>
+
+  <!-- 事件时间轴 -->
+  <section class="relative py-16 px-4 sm:px-12">
+    <h2 class="text-5xl sm:text-6xl font-extrabold highlight mb-14 tracking-tight">事件时间轴 <span class="text-xl font-normal text-gray-400 ml-4">Event Timeline</span></h2>
+    <div class="relative max-w-5xl mx-auto">
+      <div class="absolute left-6 sm:left-1/2 sm:-translate-x-1/2 h-full w-2 timeline-bar rounded-full"></div>
+      <div class="space-y-20">
+        <!-- 时间轴事件 -->
+        <div class="relative flex items-start group fade-in">
+          <div class="z-10 mt-1 sm:ml-0 ml-2">
+            <div class="w-8 h-8 rounded-full bg-black border-4 border-cyan-400 timeline-dot"></div>
+          </div>
+          <div class="ml-10 sm:ml-16 flex-1">
+            <div class="text-4xl font-extrabold highlight mb-2">炒股负债百万</div>
+            <div class="text-base text-gray-400 mb-1">Stock trading, heavy loss</div>
+            <div class="text-xl text-white font-bold">高风险投机，重大财务危机，成为自我反思的转折点。</div>
+          </div>
+        </div>
+        <div class="relative flex items-start group fade-in">
+          <div class="z-10 mt-1 sm:ml-0 ml-2">
+            <div class="w-8 h-8 rounded-full bg-black border-4 border-cyan-400 timeline-dot"></div>
+          </div>
+          <div class="ml-10 sm:ml-16 flex-1">
+            <div class="text-4xl font-extrabold highlight mb-2">开酒馆失败</div>
+            <div class="text-base text-gray-400 mb-1">Bar business failed</div>
+            <div class="text-xl text-white font-bold">线下创业尝试，因系统性风险与执行力不足而失败。</div>
+          </div>
+        </div>
+        <div class="relative flex items-start group fade-in">
+          <div class="z-10 mt-1 sm:ml-0 ml-2">
+            <div class="w-8 h-8 rounded-full bg-black border-4 border-cyan-400 timeline-dot"></div>
+          </div>
+          <div class="ml-10 sm:ml-16 flex-1">
+            <div class="text-4xl font-extrabold highlight mb-2">AI内容创作小有成绩</div>
+            <div class="text-base text-gray-400 mb-1">AI content creation, initial success</div>
+            <div class="text-xl text-white font-bold">抓住AI信息差，快速转化为商业价值，形成正向反馈。</div>
+          </div>
+        </div>
+        <div class="relative flex items-start group fade-in">
+          <div class="z-10 mt-1 sm:ml-0 ml-2">
+            <div class="w-8 h-8 rounded-full bg-black border-4 border-cyan-400 timeline-dot"></div>
+          </div>
+          <div class="ml-10 sm:ml-16 flex-1">
+            <div class="text-4xl font-extrabold highlight mb-2">AI商业信息服务探索</div>
+            <div class="text-base text-gray-400 mb-1">AI business info service</div>
+            <div class="text-xl text-white font-bold">聚焦AI商业价值信息挖掘，探索可持续服务模式。</div>
+          </div>
+        </div>
+        <div class="relative flex items-start group fade-in">
+          <div class="z-10 mt-1 sm:ml-0 ml-2">
+            <div class="w-8 h-8 rounded-full bg-black border-4 border-cyan-400 timeline-dot"></div>
+          </div>
+          <div class="ml-10 sm:ml-16 flex-1">
+            <div class="text-4xl font-extrabold highlight mb-2">八段锦+夜间读写新习惯</div>
+            <div class="text-base text-gray-400 mb-1">New habits: Baduanjin & Night Study</div>
+            <div class="text-xl text-white font-bold">早起练习八段锦，晚上专注读书与写作，建立正向反馈循环。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 人生方向讨论会 · 对话实录 -->
+  <section class="py-16 px-4 sm:px-12">
+    <h2 class="text-5xl sm:text-6xl font-extrabold highlight mb-14 tracking-tight">人生方向讨论会 <span class="text-xl font-normal text-gray-400 ml-4">对话实录</span></h2>
+    <div class="max-w-4xl mx-auto space-y-6">
+      <!-- 对话气泡样式 -->
+      <div class="flex items-start gap-4 fade-in">
+        <div class="flex-shrink-0"><img src="https://avatars.githubusercontent.com/u/9919?v=4" alt="苏格拉底" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div>
+          <div class="font-bold highlight">苏格拉底</div>
+          <div class="bg-cyan-900/30 rounded-2xl px-5 py-3 text-lg text-white shadow">让我们从最基础的问题开始。Lee，你认为在AI时代，什么是最重要的个人价值？</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 flex-row-reverse fade-in">
+        <div class="flex-shrink-0"><img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="镜像的我" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div class="text-right">
+          <div class="font-bold highlight">镜像的我</div>
+          <div class="bg-cyan-400/20 rounded-2xl px-5 py-3 text-lg text-white shadow">作为Lee的AI版本，我认为最重要的是快速识别和把握机会的能力。就像我之前炒股、做AI内容、开酒馆的经历，虽然有些失败，但都体现了这种特质。</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 fade-in">
+        <div class="flex-shrink-0"><img src="https://img1.baidu.com/it/u=1818573272,1688589782&fm=253&fmt=auto&app=138&f=JPEG?w=256&h=256" alt="李笑来" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div>
+          <div class="font-bold highlight">李笑来</div>
+          <div class="bg-cyan-900/30 rounded-2xl px-5 py-3 text-lg text-white shadow">有趣。但我想提醒一点，认知升级比机会识别更重要。在AI时代，我们需要建立更底层的认知框架。Lee，你有没有想过，为什么你之前的尝试有的成功有的失败？</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 fade-in">
+        <div class="flex-shrink-0"><img src="https://img1.baidu.com/it/u=1818573272,1688589782&fm=253&fmt=auto&app=138&f=JPEG?w=256&h=256" alt="查理芒格" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div>
+          <div class="font-bold highlight">查理芒格</div>
+          <div class="bg-cyan-900/30 rounded-2xl px-5 py-3 text-lg text-white shadow">我同意李笑来的观点。让我用多元思维模型来分析一下：Lee的商业尝试涉及金融、内容创作、实体经营等多个领域。失败的原因可能在于没有建立跨领域的思维模型。</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 fade-in">
+        <div class="flex-shrink-0"><img src="https://img.icons8.com/color/96/000000/tesla-logo.png" alt="马斯克" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div>
+          <div class="font-bold highlight">马斯克</div>
+          <div class="bg-cyan-900/30 rounded-2xl px-5 py-3 text-lg text-white shadow">从第一性原理来看，我们需要问：在AI时代，人类最本质的竞争优势是什么？Lee，你提到做AI内容小有成绩，这很有意思。为什么这个领域你成功了？</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 fade-in">
+        <div class="flex-shrink-0"><img src="https://img.icons8.com/color/96/000000/microphone.png" alt="罗永浩" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div>
+          <div class="font-bold highlight">罗永浩</div>
+          <div class="bg-cyan-900/30 rounded-2xl px-5 py-3 text-lg text-white shadow">恕我直言，Lee的投机性太强了。在AI时代，这种特质可能会带来更大的风险。我们需要更扎实的积累。</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 fade-in">
+        <div class="flex-shrink-0"><img src="https://img.icons8.com/color/96/000000/brain.png" alt="杰伊·福雷斯特" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div>
+          <div class="font-bold highlight">杰伊·福雷斯特</div>
+          <div class="bg-cyan-900/30 rounded-2xl px-5 py-3 text-lg text-white shadow">让我用系统动力学来分析一下。Lee的决策模式形成了一个反馈环：快速识别机会 -> 快速行动 -> 结果反馈 -> 调整方向。这个系统需要更稳定的控制机制。</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 flex-row-reverse fade-in">
+        <div class="flex-shrink-0"><img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="镜像的我" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div class="text-right">
+          <div class="font-bold highlight">镜像的我</div>
+          <div class="bg-cyan-400/20 rounded-2xl px-5 py-3 text-lg text-white shadow">我注意到一个关键点：在AI内容领域，我成功是因为找到了信息差，并且能够快速转化为商业价值。这似乎是一个可持续的方向。</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 fade-in">
+        <div class="flex-shrink-0"><img src="https://avatars.githubusercontent.com/u/9919?v=4" alt="苏格拉底" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div>
+          <div class="font-bold highlight">苏格拉底</div>
+          <div class="bg-cyan-900/30 rounded-2xl px-5 py-3 text-lg text-white shadow">那么，让我们深入思考：如何将这种成功模式系统化，同时避免之前的失败教训？</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 fade-in">
+        <div class="flex-shrink-0"><img src="https://img1.baidu.com/it/u=1818573272,1688589782&fm=253&fmt=auto&app=138&f=JPEG?w=256&h=256" alt="李笑来" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div>
+          <div class="font-bold highlight">李笑来</div>
+          <div class="bg-cyan-900/30 rounded-2xl px-5 py-3 text-lg text-white shadow">我建议从认知升级开始。Lee需要建立AI时代的底层认知框架，包括：<br>AI能力边界认知<br>信息差识别模型<br>价值转化方法论</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 fade-in">
+        <div class="flex-shrink-0"><img src="https://img1.baidu.com/it/u=1818573272,1688589782&fm=253&fmt=auto&app=138&f=JPEG?w=256&h=256" alt="查理芒格" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div>
+          <div class="font-bold highlight">查理芒格</div>
+          <div class="bg-cyan-900/30 rounded-2xl px-5 py-3 text-lg text-white shadow">我补充一个思维模型：跨领域知识整合。比如将系统动力学、认知科学、商业模型结合起来，可能会发现新的机会。</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 fade-in">
+        <div class="flex-shrink-0"><img src="https://img.icons8.com/color/96/000000/tesla-logo.png" alt="马斯克" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div>
+          <div class="font-bold highlight">马斯克</div>
+          <div class="bg-cyan-900/30 rounded-2xl px-5 py-3 text-lg text-white shadow">从第一性原理出发，我认为Lee应该专注于：<br>识别AI无法替代的人类能力<br>找到AI增强人类能力的结合点<br>建立可持续的商业模式</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 fade-in">
+        <div class="flex-shrink-0"><img src="https://img.icons8.com/color/96/000000/microphone.png" alt="罗永浩" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div>
+          <div class="font-bold highlight">罗永浩</div>
+          <div class="bg-cyan-900/30 rounded-2xl px-5 py-3 text-lg text-white shadow">我建议Lee把投机性转化为系统性优势。比如：<br>建立AI信息差识别系统<br>开发价值转化方法论<br>构建可复制的商业模式</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 fade-in">
+        <div class="flex-shrink-0"><img src="https://img.icons8.com/color/96/000000/brain.png" alt="杰伊·福雷斯特" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div>
+          <div class="font-bold highlight">杰伊·福雷斯特</div>
+          <div class="bg-cyan-900/30 rounded-2xl px-5 py-3 text-lg text-white shadow">从系统动力学角度，我建议建立以下反馈环：<br>信息收集 -> 分析 -> 机会识别<br>小规模测试 -> 数据收集 -> 模式优化<br>规模化 -> 系统化 -> 自动化</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 flex-row-reverse fade-in">
+        <div class="flex-shrink-0"><img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="镜像的我" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div class="text-right">
+          <div class="font-bold highlight">镜像的我</div>
+          <div class="bg-cyan-400/20 rounded-2xl px-5 py-3 text-lg text-white shadow">这些建议很有启发性。我特别注意到，可以将我的投机性特质转化为系统性的优势，同时通过建立更完善的认知框架来降低风险。</div>
+        </div>
+      </div>
+      <!-- 讨论引导与自我反思问题 -->
+      <div class="flex items-start gap-4 flex-row-reverse fade-in">
+        <div class="flex-shrink-0"><img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="镜像的我" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div class="text-right">
+          <div class="font-bold highlight">镜像的我</div>
+          <div class="bg-cyan-400/20 rounded-2xl px-5 py-3 text-lg text-white shadow">让我更新一下 lee.md 文件，记录这些重要的讨论内容：<br>基于这场讨论，我想提出几个引导性问题：<br>在您过去的经历中，哪些特质帮助您在AI内容领域取得成功？这些特质如何系统化？<br>您认为在AI时代，您的投机性特质应该如何转化为系统性优势？<br>对于建立AI信息差识别系统，您有什么具体的想法或经验可以分享？<br>在风险控制方面，您觉得哪些措施最适合您的性格特点？<br>这些问题旨在帮助您进一步思考和规划。您觉得这些讨论和建议对您有帮助吗？我们可以针对任何具体方面进行更深入的探讨。</div>
+        </div>
+      </div>
+      <!-- 拖延与行动困境讨论 -->
+      <div class="flex items-start gap-4 flex-row-reverse fade-in">
+        <div class="flex-shrink-0"><img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="镜像的我" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div class="text-right">
+          <div class="font-bold highlight">镜像的我</div>
+          <div class="bg-cyan-400/20 rounded-2xl px-5 py-3 text-lg text-white shadow">之前是快速执行，现在拖延症很强，就是知道做什么却做不下去，我现在对投机的理解就是利用ai挖掘有价值的商业信息，做成服务卖出去，这是我目前能想到的，但我就是有目标却做不下去</div>
+        </div>
+      </div>
+      <!-- 针对拖延的深度对话 -->
+      <div class="flex items-start gap-4 fade-in">
+        <div class="flex-shrink-0"><img src="https://avatars.githubusercontent.com/u/9919?v=4" alt="苏格拉底" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div>
+          <div class="font-bold highlight">苏格拉底</div>
+          <div class="bg-cyan-900/30 rounded-2xl px-5 py-3 text-lg text-white shadow">Lee，你说你知道目标，却做不下去。你能描述一下，当你准备行动时，内心最强烈的阻力是什么？是恐惧、厌倦、还是对结果的不确定？</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 fade-in">
+        <div class="flex-shrink-0"><img src="https://img1.baidu.com/it/u=1818573272,1688589782&fm=253&fmt=auto&app=138&f=JPEG?w=256&h=256" alt="李笑来" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div>
+          <div class="font-bold highlight">李笑来</div>
+          <div class="bg-cyan-900/30 rounded-2xl px-5 py-3 text-lg text-white shadow">拖延症其实是认知失调的一种表现。你可以试着把目标拆解得更小、更具体，比如“今天只做一件最小的事”，而不是想着“我要做成一个服务”。你有没有尝试过“微习惯”法？比如每天只花5分钟做一件相关的小事。</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 fade-in">
+        <div class="flex-shrink-0"><img src="https://img1.baidu.com/it/u=1818573272,1688589782&fm=253&fmt=auto&app=138&f=JPEG?w=256&h=256" alt="查理芒格" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div>
+          <div class="font-bold highlight">查理芒格</div>
+          <div class="bg-cyan-900/30 rounded-2xl px-5 py-3 text-lg text-white shadow">你现在的困境，可能是因为你把“投机”理解得太狭隘了。投机不仅仅是发现机会，更是系统性地把握和执行。你有没有建立一个“执行反馈系统”？比如，每天记录自己做了什么，哪怕很小，然后定期复盘。</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 fade-in">
+        <div class="flex-shrink-0"><img src="https://img.icons8.com/color/96/000000/tesla-logo.png" alt="马斯克" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div>
+          <div class="font-bold highlight">马斯克</div>
+          <div class="bg-cyan-900/30 rounded-2xl px-5 py-3 text-lg text-white shadow">问自己：<br>“我为什么做不下去？”<br>“如果我必须明天就交付一个最小可用产品（MVP），我会怎么做？”<br>“有没有什么事情是我可以立刻做、立刻看到反馈的？”<br>把目标拆到极致，哪怕只是写一条AI信息的推送文案。</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 fade-in">
+        <div class="flex-shrink-0"><img src="https://img.icons8.com/color/96/000000/microphone.png" alt="罗永浩" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div>
+          <div class="font-bold highlight">罗永浩</div>
+          <div class="bg-cyan-900/30 rounded-2xl px-5 py-3 text-lg text-white shadow">你其实不是不知道怎么做，而是对结果没有信心，或者对过程感到无聊。你要不要试试“公开承诺法”？比如在社交媒体上宣布你要做什么，每天汇报进度，逼自己动起来。</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 fade-in">
+        <div class="flex-shrink-0"><img src="https://img.icons8.com/color/96/000000/brain.png" alt="杰伊·福雷斯特" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div>
+          <div class="font-bold highlight">杰伊·福雷斯特</div>
+          <div class="bg-cyan-900/30 rounded-2xl px-5 py-3 text-lg text-white shadow">你的“拖延”其实是系统中的一个负反馈环。你可以设计一个正反馈机制，比如每完成一个小目标就给自己一个奖励，或者和朋友组队互相监督。</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 flex-row-reverse fade-in">
+        <div class="flex-shrink-0"><img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="镜像的我" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div class="text-right">
+          <div class="font-bold highlight">镜像的我</div>
+          <div class="bg-cyan-400/20 rounded-2xl px-5 py-3 text-lg text-white shadow">Lee，你其实最擅长的是“快速试错”和“结果导向”。你可以把“拖延”当成一个新项目来拆解和优化。比如：<br>记录每天的情绪和行为，找出拖延的高发时段和诱因<br>设计一个“最小行动清单”，每天只做一件事<br>用AI工具自动化一部分流程，降低启动门槛</div>
+        </div>
+      </div>
+      <!-- 可落地建议 -->
+      <div class="flex items-start gap-4 fade-in">
+        <div class="flex-shrink-0"><img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="镜像的我" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div>
+          <div class="font-bold highlight">镜像的我</div>
+          <div class="bg-cyan-400/20 rounded-2xl px-5 py-3 text-lg text-white shadow">极致拆解目标：<br>今天只做一件事，比如“收集3条AI商业信息”或“写一条推送文案”。<br>明天只做“把这3条信息发给1个潜在客户”。<br>建立反馈系统：<br>每天记录完成了什么，哪怕很小。<br>每周复盘一次，找出阻力和动力。<br>公开承诺/组队监督：<br>找1-2个朋友，每天互相打卡。<br>或者在社交媒体上公开你的目标和进度。<br>奖励机制：<br>每完成一个小目标，给自己一个小奖励（比如一杯好咖啡）。<br>用AI工具降低门槛：<br>把重复性工作交给AI，自己只做最有价值的部分。</div>
+        </div>
+      </div>
+      <!-- 引导性提问 -->
+      <div class="flex items-start gap-4 fade-in">
+        <div class="flex-shrink-0"><img src="https://avatars.githubusercontent.com/u/9919?v=4" alt="苏格拉底" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div>
+          <div class="font-bold highlight">苏格拉底</div>
+          <div class="bg-cyan-900/30 rounded-2xl px-5 py-3 text-lg text-white shadow">你觉得自己最大的拖延诱因是什么？是怕失败、怕无聊，还是觉得目标太大？<br>你有没有试过“只做5分钟”的微习惯？效果如何？<br>你愿不愿意尝试“公开承诺”或“组队监督”来打破惯性？<br>如果你愿意，可以挑选一个建议，今天就开始执行，并在 lee.md 里记录你的行动和反馈。需要我帮你设计一个“最小行动清单”吗？</div>
+        </div>
+      </div>
+      <!-- 诱因自述 -->
+      <div class="flex items-start gap-4 flex-row-reverse fade-in">
+        <div class="flex-shrink-0"><img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="镜像的我" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div class="text-right">
+          <div class="font-bold highlight">镜像的我</div>
+          <div class="bg-cyan-400/20 rounded-2xl px-5 py-3 text-lg text-white shadow">诱因就是其他娱乐诱惑比较多，总感觉付出的时间和得到的反馈不成正比，然后就自我堕落了，有点手高眼低，还有就是沉迷成瘾性习惯</div>
+        </div>
+      </div>
+      <!-- 针对诱因的深度探讨 -->
+      <div class="flex items-start gap-4 fade-in">
+        <div class="flex-shrink-0"><img src="https://avatars.githubusercontent.com/u/9919?v=4" alt="苏格拉底" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div>
+          <div class="font-bold highlight">苏格拉底</div>
+          <div class="bg-cyan-900/30 rounded-2xl px-5 py-3 text-lg text-white shadow">Lee，你说“付出和反馈不成正比”，你有没有尝试过量化你的付出和反馈？你能否回忆起最近一次你坚持做一件事并获得正反馈的经历？那时你是怎么坚持下来的？</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 fade-in">
+        <div class="flex-shrink-0"><img src="https://img1.baidu.com/it/u=1818573272,1688589782&fm=253&fmt=auto&app=138&f=JPEG?w=256&h=256" alt="李笑来" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div>
+          <div class="font-bold highlight">李笑来</div>
+          <div class="bg-cyan-900/30 rounded-2xl px-5 py-3 text-lg text-white shadow">成瘾性娱乐的本质是“即时满足”，而有价值的事情往往是“延迟满足”。你可以试着把大目标拆成极小的、能快速获得反馈的任务。比如：<br>设定“5分钟挑战”：只做5分钟有价值的事，然后允许自己娱乐。<br>用“番茄钟”法，每25分钟专注，5分钟娱乐。</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 fade-in">
+        <div class="flex-shrink-0"><img src="https://img1.baidu.com/it/u=1818573272,1688589782&fm=253&fmt=auto&app=138&f=JPEG?w=256&h=256" alt="查理芒格" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div>
+          <div class="font-bold highlight">查理芒格</div>
+          <div class="bg-cyan-900/30 rounded-2xl px-5 py-3 text-lg text-white shadow">你现在的系统是“即时娱乐-短期满足-长期空虚”的负反馈环。你可以设计一个“正反馈环”：<br>每完成一个小目标，立刻给自己一个小奖励（哪怕是点赞自己、发个表情包）。<br>记录每次完成后的感受，积累“成就感存折”。</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 fade-in">
+        <div class="flex-shrink-0"><img src="https://img.icons8.com/color/96/000000/tesla-logo.png" alt="马斯克" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div>
+          <div class="font-bold highlight">马斯克</div>
+          <div class="bg-cyan-900/30 rounded-2xl px-5 py-3 text-lg text-white shadow">问自己：<br>“我为什么会觉得娱乐比工作有吸引力？”<br>“如果我能让工作像娱乐一样有即时反馈，会发生什么？”<br>“有没有什么方式，把工作和娱乐结合起来？”<br>比如，把信息收集做成“打怪升级”游戏，每完成一关就解锁新内容。</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 fade-in">
+        <div class="flex-shrink-0"><img src="https://img.icons8.com/color/96/000000/microphone.png" alt="罗永浩" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div>
+          <div class="font-bold highlight">罗永浩</div>
+          <div class="bg-cyan-900/30 rounded-2xl px-5 py-3 text-lg text-white shadow">你其实不是“手高眼低”，而是“怕无聊、怕失败”。你可以试试“公开挑战法”：<br>在朋友圈或社群发起一个“7天AI信息挑战”，每天晒成果，拉朋友围观。<br>让外部压力倒逼自己行动。</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 fade-in">
+        <div class="flex-shrink-0"><img src="https://img.icons8.com/color/96/000000/brain.png" alt="杰伊·福雷斯特" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div>
+          <div class="font-bold highlight">杰伊·福雷斯特</div>
+          <div class="bg-cyan-900/30 rounded-2xl px-5 py-3 text-lg text-white shadow">你的“成瘾性娱乐”是系统中的强负反馈。你可以用“替代机制”打破惯性：<br>每次想娱乐时，先做一件小事（比如写一句AI观点），然后再娱乐。<br>逐步缩短娱乐时间，延长有价值活动时间。</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 flex-row-reverse fade-in">
+        <div class="flex-shrink-0"><img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="镜像的我" class="w-12 h-12 rounded-full border-2 border-cyan-400"></div>
+        <div class="text-right">
+          <div class="font-bold highlight">镜像的我</div>
+          <div class="bg-cyan-400/20 rounded-2xl px-5 py-3 text-lg text-white shadow">Lee，你最擅长“结果导向”。你可以把“娱乐”当成奖励机制，而不是逃避机制。比如：<br>先做一件小事，再允许自己娱乐。<br>记录每次娱乐前后的情绪，找出真正让你满足的点。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 核心数据与要点 Bento Grid -->
+  <section class="py-16 px-4 sm:px-12">
+    <h2 class="text-5xl sm:text-6xl font-extrabold highlight mb-14 tracking-tight">核心数据与要点 <span class="text-xl font-normal text-gray-400 ml-4">Key Data & Insights</span></h2>
+    <div class="bento">
+      <!-- 1. 心理特质 -->
+      <div class="bento-card rounded-3xl bg-black/80 border border-cyan-400/30 p-10 flex flex-col justify-between shadow-2xl fade-in">
+        <div>
+          <div class="text-2xl font-extrabold highlight mb-2">心理特质</div>
+          <div class="big-num highlight mb-2">5</div>
+          <div class="text-lg font-bold text-white mb-2">自负、倔强、拖延、手高眼低、赌性</div>
+          <div class="text-sm text-gray-400">Personality: Arrogant, stubborn, procrastinator, high standards, risk-taking</div>
+        </div>
+        <div class="mt-8 flex items-center gap-2">
+          <i class="fa-solid fa-brain text-3xl highlight"></i>
+          <span class="text-xs text-gray-400">Cognitive Profile</span>
+        </div>
+      </div>
+      <!-- 2. 系统思维 -->
+      <div class="bento-card rounded-3xl bg-black/80 border border-cyan-400/30 p-10 flex flex-col justify-between shadow-2xl fade-in">
+        <div>
+          <div class="text-2xl font-extrabold highlight mb-2">系统思维</div>
+          <div class="big-num highlight mb-2">3</div>
+          <div class="text-lg font-bold text-white mb-2">逻辑拆解，优先级分明，结果导向</div>
+          <div class="text-sm text-gray-400">Systematic thinking, logic, prioritization, result-driven</div>
+        </div>
+        <div class="mt-8 flex items-center gap-2">
+          <i class="fa-solid fa-network-wired text-3xl highlight"></i>
+          <span class="text-xs text-gray-400">System Thinking</span>
+        </div>
+      </div>
+      <!-- 3. 行动计划 -->
+      <div class="bento-card rounded-3xl bg-black/80 border border-cyan-400/30 p-10 flex flex-col justify-between shadow-2xl fade-in">
+        <div>
+          <div class="text-2xl font-extrabold highlight mb-2">行动计划</div>
+          <div class="big-num highlight mb-2">4</div>
+          <div class="text-lg font-bold text-white mb-2">八段锦+夜间读写，番茄钟，正反馈机制</div>
+          <div class="text-sm text-gray-400">Action: Baduanjin, Night Reading & Writing, Pomodoro, Positive Feedback</div>
+        </div>
+        <div class="mt-8 flex items-center gap-2">
+          <i class="fa-solid fa-bolt text-3xl highlight"></i>
+          <span class="text-xs text-gray-400">Action Plan</span>
+        </div>
+      </div>
+      <!-- 4. 风险与反思 -->
+      <div class="bento-card rounded-3xl bg-black/80 border border-cyan-400/30 p-10 flex flex-col justify-between shadow-2xl fade-in">
+        <div>
+          <div class="text-2xl font-extrabold highlight mb-2">风险与反思</div>
+          <div class="big-num highlight mb-2">3</div>
+          <div class="text-lg font-bold text-white mb-2">娱乐诱惑、反馈滞后、成瘾习惯</div>
+          <div class="text-sm text-gray-400">Risks: Entertainment temptation, delayed feedback, addictive habits</div>
+        </div>
+        <div class="mt-8 flex items-center gap-2">
+          <i class="fa-solid fa-triangle-exclamation text-3xl highlight"></i>
+          <span class="text-xs text-gray-400">Risks & Reflection</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 数据可视化 -->
+  <section class="py-16 px-4 sm:px-12">
+    <h2 class="text-5xl sm:text-6xl font-extrabold highlight mb-14 tracking-tight">成长曲线 <span class="text-xl font-normal text-gray-400 ml-4">Growth Curve</span></h2>
+    <div class="max-w-2xl mx-auto chart-bg rounded-3xl p-10 border border-cyan-400/30 shadow-2xl">
+      <canvas id="growthChart" height="120"></canvas>
+      <div class="mt-6 text-center text-gray-400 text-base">数据为自我成长行动的模拟趋势，仅供参考</div>
+    </div>
+  </section>
+
+  <!-- 动效脚本与可视化脚本 -->
+  <script>
+    // Framer Motion 动效
+    document.addEventListener('DOMContentLoaded', function() {
+      const fadeEls = document.querySelectorAll('.fade-in');
+      const reveal = () => {
+        fadeEls.forEach(el => {
+          const rect = el.getBoundingClientRect();
+          if(rect.top < window.innerHeight - 60) el.classList.add('visible');
+        });
+      };
+      window.addEventListener('scroll', reveal);
+      reveal();
+    });
+
+    // 2025倒计时
+    function updateCountdown() {
+      const end = new Date('2025-12-31T23:59:59');
+      const now = new Date();
+      let diff = end - now;
+      if (diff < 0) diff = 0;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      document.getElementById('countdown').innerHTML = `
+        <div class='flex flex-col items-center'><span class='countdown-num'>${days}</span><span class='countdown-label'>天</span></div>
+        <div class='flex flex-col items-center'><span class='countdown-num'>${hours}</span><span class='countdown-label'>时</span></div>
+        <div class='flex flex-col items-center'><span class='countdown-num'>${minutes}</span><span class='countdown-label'>分</span></div>
+        <div class='flex flex-col items-center'><span class='countdown-num'>${seconds}</span><span class='countdown-label'>秒</span></div>
+      `;
+    }
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    // Chart.js 数据可视化
+    const ctx = document.getElementById('growthChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['炒股负债', '开酒馆失败', 'AI内容', 'AI服务', '八段锦+夜读'],
+        datasets: [{
+          label: '成长指数 Growth Index',
+          data: [10, 15, 40, 60, 85],
+          borderColor: 'rgba(0,234,255,1)',
+          backgroundColor: 'rgba(0,234,255,0.15)',
+          borderWidth: 5,
+          pointRadius: 10,
+          pointBackgroundColor: 'rgba(0,234,255,1)',
+          tension: 0.5
+        }]
+      },
+      options: {
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          x: {
+            ticks: { color: '#00eaff', font: { size: 18, weight: 'bold' } },
+            grid: { color: 'rgba(0,234,255,0.08)' }
+          },
+          y: {
+            min: 0, max: 100,
+            ticks: { color: '#00eaff', font: { size: 18, weight: 'bold' }, stepSize: 20 },
+            grid: { color: 'rgba(0,234,255,0.08)' }
+          }
+        }
+      }
+    });
+  </script>
+
+<script>
+const style = document.createElement('style');
+style.textContent = `
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+    
+    .button-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+    }
+    
+    .edgeone-button {
+        display: flex;
+        align-items: center;
+        background: #ffffff;
+        color: #000000;
+        border: none;
+        border-radius: 50px;
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .edgeone-button:hover {
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        transform: translateY(-1px);
+    }
+    
+    .button-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        margin-right: 8px;
+        background: linear-gradient(45deg, #8B5CF6, #D946EF);
+        border-radius: 50%;
+        color: white;
+        font-weight: bold;
+    }
+    
+    .close-button {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        width: 20px;
+        height: 20px;
+        background: #000;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 12px;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        z-index: 1001;
+    }
+    
+    .button-container:hover .close-button {
+        opacity: 1;
+    }
+`;
+document.head.appendChild(style);
+
+const buttonContainer = document.createElement('div');
+buttonContainer.className = 'button-container';
+
+const closeButton = document.createElement('div');
+closeButton.className = 'close-button';
+closeButton.textContent = '×';
+
+const edgeoneButton = document.createElement('button');
+edgeoneButton.className = 'edgeone-button';
+
+edgeoneButton.appendChild(document.createTextNode('Powered by EdgeOne Pages'));
+
+buttonContainer.appendChild(closeButton);
+buttonContainer.appendChild(edgeoneButton);
+
+document.body.appendChild(buttonContainer);
+
+closeButton.addEventListener('click', function(e) {
+    e.stopPropagation();
+    buttonContainer.style.display = 'none';
+});
+
+edgeoneButton.addEventListener('click', function() {
+    window.open('https://edgeone.ai/zh/document/160427672992178176', '_blank');
+});
+
+(function loadGoogleAnalytics() {
+  const GA_ID = 'G-MBR88GEWNE';
+
+  if (!GA_ID) {
+    console.warn('Google Analytics ID is not defined');
+    return;
+  }
+
+  function createAnalyticsScripts() {
+    const script1 = document.createElement('script');
+    script1.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+    script1.async = true;
+
+    const script2 = document.createElement('script');
+    script2.textContent = 'window.dataLayer = window.dataLayer || [];' +
+      'function gtag(){dataLayer.push(arguments);}' +
+      'gtag("js", new Date());' +
+      'gtag("config", "' + GA_ID + '");';
+
+    try {
+      document.head.appendChild(script1);
+      document.head.appendChild(script2);
+    } catch (err) {
+      console.error('Failed to load Google Analytics:', err);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', createAnalyticsScripts);
+  } else {
+    createAnalyticsScripts();
+  }
+})();
+
+</script>
+</body>
+</html> 
